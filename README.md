@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Smart Recruitz - AI Interview Validation Pipeline
 ## Overview
 The Smart Recruitz automated interview validation pipeline evaluates candidate interview transcripts in real-time. It leverages an orchestrated AI state machine to analyze responses against structured rubrics, outputting standard readiness scores and talent pool decisions.
@@ -24,3 +25,6 @@ Test the core LangGraph logic using the mock AI adapter:
 ```bash
 python Day3/test_integration.py
 ```
+=======
+This is branch "Vinita" for SMART RECRUITZ POC. I will be pushing the day wise deliverables to this branch
+>>>>>>> f9367b580cbf0e94f56de72c97edaae818434ac1
