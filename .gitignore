@@ -29,3 +29,9 @@ Td - documents/
 # Logs
 *.log
 logs/
+
+# Ignore internal docs
+documents/
+tech_docs/
+**/CLAUDE.md
+CLAUDE.md
