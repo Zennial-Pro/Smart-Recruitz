@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZennialPro - SmartRecruitz Onboarding</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .step-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .step-circle.active {
+            background: white;
+            color: #1a237e;
+        }
+
+        .step-circle.completed {
+            background: #4caf50;
+            color: white;
+        }
+
+        .step-line {
+            width: 30px;
+            height: 3px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+
+        .step-line.completed {
+            background: #4caf50;
+        }
+
+        .step-label {
+            font-size: 10px;
+            opacity: 0.8;
+            display: none;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .chat-section {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #f8f9fa;
+            padding: 15px 25px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bot-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .bot-info h3 {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .bot-info p {
+            font-size: 12px;
+            color: #4caf50;
+        }
+
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            background: #fafbfc;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.bot {
+            align-items: flex-start;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .bubble {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .bot .bubble {
+            background: white;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #eee;
+        }
+
+        .user .bubble {
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .timestamp {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+            padding: 0 10px;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 18px 22px;
+            background: white;
+            border-radius: 20px;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #eee;
+        }
+
+        .typing-indicator span {
+            width: 10px;
+            height: 10px;
+            background: #bbb;
+            border-radius: 50%;
+            animation: typing 1s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .input-area {
+            padding: 20px 25px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 15px 22px;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-area input:focus {
+            border-color: #1a237e;
+        }
+
+        .input-area input:disabled {
+            background: #f5f5f5;
+        }
+
+        .send-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(26, 35, 126, 0.3);
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .chip {
+            background: #e8eaf6;
+            color: #1a237e;
+            padding: 12px 22px;
+            border-radius: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 2px solid #c5cae9;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .chip:hover {
+            background: #1a237e;
+            color: white;
+            border-color: #1a237e;
+        }
+
+        .data-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 15px;
+            border-left: 4px solid #1a237e;
+        }
+
+        .data-card h4 {
+            font-size: 13px;
+            color: #1a237e;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            color: #666;
+        }
+
+        .data-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .skill-tag {
+            background: #e8eaf6;
+            color: #3949ab;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .file-upload {
+            background: #f8f9fa;
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: #1a237e;
+            background: #e8eaf6;
+        }
+
+        .file-upload.uploaded {
+            border-color: #4caf50;
+            border-style: solid;
+            background: #e8f5e9;
+        }
+
+        .file-icon {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-badge.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-badge.processing {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #1a237e, #3949ab);
+            height: 100%;
+            border-radius: 10px;
+            width: 0%;
+            animation: progressAnim 2s forwards;
+        }
+
+        @keyframes progressAnim {
+            to { width: 100%; }
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .question-number {
+            font-size: 11px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .video-area {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            margin-top: 15px;
+        }
+
+        .video-area .icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .record-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            animation: pulseBtn 1.5s infinite;
+        }
+
+        @keyframes pulseBtn {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.4); }
+            50% { box-shadow: 0 0 0 20px rgba(244, 67, 54, 0); }
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 25px;
+        }
+
+        .score-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4caf50, #8bc34a);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            color: white;
+            box-shadow: 0 15px 40px rgba(76, 175, 80, 0.3);
+        }
+
+        .score-circle .score {
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .score-circle .label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 12px;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .job-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+
+        .job-card h5 {
+            color: #1a237e;
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .match-score {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Info Panel */
+        .info-panel {
+            width: 320px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 25px;
+            height: fit-content;
+        }
+
+        .info-panel h3 {
+            color: #1a237e;
+            font-size: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e8eaf6;
+        }
+
+        .poc-list {
+            list-style: none;
+        }
+
+        .poc-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+        }
+
+        .poc-list li:last-child {
+            border-bottom: none;
+        }
+
+        .poc-num {
+            width: 26px;
+            height: 26px;
+            background: #e8eaf6;
+            color: #1a237e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .poc-num.active {
+            background: #1a237e;
+            color: white;
+        }
+
+        .poc-num.completed {
+            background: #4caf50;
+            color: white;
+        }
+
+        .candidate-info {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #e8eaf6;
+        }
+
+        .candidate-info h4 {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .candidate-info p {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .candidate-info strong {
+            color: #1a237e;
+        }
+
+        @media (max-width: 1024px) {
+            .info-panel {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 15px;
+            }
+
+            .progress-container {
+                display: none;
+            }
+
+            .main-container {
+                padding: 10px;
+            }
+
+            .bubble {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">Z</div>
+            <div class="logo-text">
+                <h1>ZennialPro</h1>
+                <p>SmartRecruitz Onboarding</p>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-step">
+                <div class="step-circle" id="step1">1</div>
+            </div>
+            <div class="step-line" id="line1"></div>
+            <div class="progress-step">
+                <div class="step-circle" id="step2">2</div>
+            </div>
+            <div class="step-line" id="line2"></div>
+            <div class="progress-step">
+                <div class="step-circle" id="step3">3</div>
+            </div>
+            <div class="step-line" id="line3"></div>
+            <div class="progress-step">
+                <div class="step-circle" id="step4">4</div>
+            </div>
+            <div class="step-line" id="line4"></div>
+            <div class="progress-step">
+                <div class="step-circle" id="step5">5</div>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <span style="font-size: 13px; opacity: 0.8;">Profile Verification</span>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="chat-section">
+            <div class="chat-header">
+                <div class="bot-avatar">🤖</div>
+                <div class="bot-info">
+                    <h3>SmartRecruitz Assistant</h3>
+                    <p><span class="online-dot"></span>Online - Ready to help</p>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here -->
+            </div>
+
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="Type your message..." disabled>
+                <button class="send-btn" id="sendBtn" disabled>➤</button>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3>Profile Verification (POC 1-5)</h3>
+            <ul class="poc-list">
+                <li>
+                    <span class="poc-num" id="poc1">1</span>
+                    <span>Resume Parser & Skill Normalization</span>
+                </li>
+                <li>
+                    <span class="poc-num" id="poc2">2</span>
+                    <span>Duplicate Identification</span>
+                </li>
+                <li>
+                    <span class="poc-num" id="poc3">3</span>
+                    <span>Verification (Identity + Experience)</span>
+                </li>
+                <li>
+                    <span class="poc-num" id="poc4">4</span>
+                    <span>Interview Question Generation</span>
+                </li>
+                <li>
+                    <span class="poc-num" id="poc5">5</span>
+                    <span>Interview Validation & Scoring</span>
+                </li>
+            </ul>
+
+            <div class="candidate-info" id="candidateInfoPanel" style="display: none;">
+                <h4>Profile Details</h4>
+                <p><strong>Name:</strong> <span id="infoName"></span></p>
+                <p><strong>Email:</strong> <span id="infoEmail"></span></p>
+                <p><strong>App ID:</strong> <span id="infoAppId"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Candidate data (filled during onboarding)
+        const candidateData = {
+            name: "",
+            email: "",
+            phone: "",
+            appId: "APP-2024-78542",
+            resumeData: {
+                experience: "8 Years",
+                currentRole: "Senior Developer @ ABC Tech",
+                currentDuration: "Jan 2020 - Present (4 yrs)",
+                previousRole: "Developer @ XYZ Corp (3 yrs)",
+                education: "B.S. Computer Science - Stanford University (2016)",
+                skills: ["Java", "Spring Boot", "Microservices", "AWS", "PostgreSQL", "Docker", "Kubernetes", "REST API", "Git", "Agile"]
+            },
+            interviewScore: 85,
+            scores: {
+                technical: 88,
+                communication: 82,
+                problemSolving: 90,
+                culturalFit: 80
+            }
+        };
+
+        const interviewQuestions = [
+            "Tell me about yourself and your experience with Java development. What projects have you worked on that you're most proud of?",
+            "Explain the difference between Spring and Spring Boot. When would you choose one over the other?",
+            "Describe a challenging bug you encountered in a microservices architecture. How did you debug and resolve it?",
+            "How do you ensure code quality in your projects? Discuss your experience with testing, code reviews, and CI/CD.",
+            "Where do you see yourself in 5 years? What aspects of this role at ZennialPro interest you most?"
+        ];
+
+        let currentStep = 1;
+        let currentQuestion = 0;
+        let flowState = "welcome";
+        let currentPoc = 0;
+
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        function getTime() {
+            return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        }
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function updateCandidateInfo() {
+            const panel = document.getElementById('candidateInfoPanel');
+            if (candidateData.name) {
+                panel.style.display = 'block';
+                document.getElementById('infoName').textContent = candidateData.name;
+                document.getElementById('infoEmail').textContent = candidateData.email || 'Pending...';
+                document.getElementById('infoAppId').textContent = candidateData.appId;
+            }
+        }
+
+        function updatePocStatus(pocNum, status) {
+            const poc = document.getElementById(`poc${pocNum}`);
+            if (poc) {
+                poc.className = `poc-num ${status}`;
+                if (status === 'completed') poc.textContent = '✓';
+            }
+        }
+
+        function addMessage(content, isBot = true, delay = 0) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = `message ${isBot ? 'bot' : 'user'}`;
+                    msgDiv.innerHTML = `
+                        <div class="bubble">${content}</div>
+                        <span class="timestamp">${getTime()}</span>
+                    `;
+                    chatMessages.appendChild(msgDiv);
+                    scrollToBottom();
+                    resolve();
+                }, delay);
+            });
+        }
+
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typing');
+            if (typing) typing.remove();
+        }
+
+        function updateProgress(step) {
+            for (let i = 1; i <= 5; i++) {
+                const dot = document.getElementById(`step${i}`);
+                const line = document.getElementById(`line${i}`);
+                if (i < step) {
+                    dot.className = 'step-circle completed';
+                    dot.innerHTML = '✓';
+                    if (line) line.className = 'step-line completed';
+                } else if (i === step) {
+                    dot.className = 'step-circle active';
+                    dot.innerHTML = i;
+                } else {
+                    dot.className = 'step-circle';
+                    dot.innerHTML = i;
+                }
+            }
+        }
+
+        function enableInput(placeholder = "Type your message...") {
+            userInput.disabled = false;
+            sendBtn.disabled = false;
+            userInput.placeholder = placeholder;
+            userInput.focus();
+        }
+
+        function disableInput() {
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+        }
+
+        function addChips(options, callback) {
+            const chipsDiv = document.createElement('div');
+            chipsDiv.className = 'chips';
+            chipsDiv.id = 'currentChips';
+            options.forEach(opt => {
+                const chip = document.createElement('span');
+                chip.className = 'chip';
+                chip.textContent = opt;
+                chip.onclick = () => {
+                    chipsDiv.remove();
+                    addMessage(opt, false);
+                    callback(opt);
+                };
+                chipsDiv.appendChild(chip);
+            });
+
+            const lastBubble = chatMessages.querySelector('.message.bot:last-child .bubble');
+            if (lastBubble) {
+                lastBubble.appendChild(chipsDiv);
+            }
+            scrollToBottom();
+        }
+
+        function addFileUpload(callback, fileType = "PDF, DOC, DOCX") {
+            const lastBubble = chatMessages.querySelector('.message.bot:last-child .bubble');
+            if (lastBubble) {
+                const uploadDiv = document.createElement('div');
+                uploadDiv.className = 'file-upload';
+                uploadDiv.innerHTML = `
+                    <div class="file-icon">📄</div>
+                    <div style="font-weight: 500;">Click to upload file</div>
+                    <div style="font-size: 12px; color: #888; margin-top: 5px;">${fileType} (Max 5MB)</div>
+                `;
+                uploadDiv.onclick = () => {
+                    uploadDiv.className = 'file-upload uploaded';
+                    uploadDiv.innerHTML = `
+                        <div class="file-icon">✅</div>
+                        <div style="font-weight: 600; color: #2e7d32;">File uploaded successfully</div>
+                    `;
+                    setTimeout(() => callback(), 500);
+                };
+                lastBubble.appendChild(uploadDiv);
+            }
+            scrollToBottom();
+        }
+
+        // Flow handlers
+        async function startFlow() {
+            await addMessage(`👋 Welcome to <strong>ZennialPro</strong> SmartRecruitz!<br><br>I'm your assistant. Let's verify your profile - <strong>One-Time Verification, Trusted by All Employers</strong>.<br><br>This verification includes:<br>• Resume parsing & skill extraction<br>• Duplicate check<br>• Identity & experience verification<br>• L1 Video Interview<br>• AI-powered readiness evaluation<br><br>Let's get started! What's your full name?`, true, 500);
+            enableInput("Enter your full name...");
+            flowState = "getName";
+        }
+
+        async function handleNameInput(name) {
+            candidateData.name = name;
+            updateCandidateInfo();
+            showTyping();
+            await new Promise(r => setTimeout(r, 800));
+            hideTyping();
+            await addMessage(`Nice to meet you, ${name}! 😊<br><br>Please provide your email address:`);
+            enableInput("Enter your email...");
+            flowState = "getEmail";
+        }
+
+        async function handleEmailInput(email) {
+            candidateData.email = email;
+            updateCandidateInfo();
+            showTyping();
+            await new Promise(r => setTimeout(r, 500));
+            hideTyping();
+            await addMessage("And your phone number?");
+            enableInput("Enter your phone...");
+            flowState = "getPhone";
+        }
+
+        async function handlePhoneInput(phone) {
+            candidateData.phone = phone;
+            disableInput();
+            showTyping();
+            await new Promise(r => setTimeout(r, 1000));
+            hideTyping();
+
+            await addMessage(`✅ Registration complete!
+                <div class="data-card">
+                    <h4>Your Profile</h4>
+                    <div class="data-row"><span class="data-label">Name</span><span class="data-value">${candidateData.name}</span></div>
+                    <div class="data-row"><span class="data-label">Email</span><span class="data-value">${candidateData.email}</span></div>
+                    <div class="data-row"><span class="data-label">Phone</span><span class="data-value">${candidateData.phone}</span></div>
+                    <div class="data-row"><span class="data-label">Position</span><span class="data-value">${candidateData.position}</span></div>
+                    <div class="data-row"><span class="data-label">Application ID</span><span class="data-value">${candidateData.appId}</span></div>
+                </div>`);
+
+            updateProgress(2);
+            updatePocStatus(1, 'active');
+            await new Promise(r => setTimeout(r, 1000));
+            await startResumeUpload();
+        }
+
+        async function startResumeUpload() {
+            showTyping();
+            await new Promise(r => setTimeout(r, 800));
+            hideTyping();
+
+            await addMessage(`<strong>POC 1: Resume Parser & Skill Normalization</strong><br><br>
+                Please upload your resume. Our AI will extract and normalize your information.`);
+            addFileUpload(handleResumeUploaded, "PDF, DOC, DOCX");
+            flowState = "uploadResume";
+        }
+
+        async function handleResumeUploaded() {
+            await addMessage(`
+                <div class="file-upload uploaded" style="border-style: solid;">
+                    <div class="file-icon">✅</div>
+                    <div><strong>${candidateData.name.replace(' ', '_')}_Resume.pdf</strong></div>
+                    <div style="font-size: 12px; color: #4caf50;">245 KB • Uploaded</div>
+                </div>`, false);
+
+            showTyping();
+            await new Promise(r => setTimeout(r, 1500));
+            hideTyping();
+
+            await addMessage(`<span class="status-badge processing">⚙️ AI Parsing Resume...</span>
+                <div class="progress-bar"><div class="progress-fill"></div></div>`);
+
+            await new Promise(r => setTimeout(r, 2500));
+
+            const skillTags = candidateData.resumeData.skills.map(s => `<span class="skill-tag">${s}</span>`).join('');
+
+            await addMessage(`✅ Resume parsed successfully!
+                <div class="data-card">
+                    <h4>📋 Personal Information</h4>
+                    <div class="data-row"><span class="data-label">Name</span><span class="data-value">${candidateData.name}</span></div>
+                    <div class="data-row"><span class="data-label">Email</span><span class="data-value">${candidateData.email}</span></div>
+                    <div class="data-row"><span class="data-label">Location</span><span class="data-value">San Francisco, CA</span></div>
+                </div>
+                <div class="data-card">
+                    <h4>💼 Experience (${candidateData.resumeData.experience})</h4>
+                    <div class="data-row"><span class="data-label">Current Role</span><span class="data-value">${candidateData.resumeData.currentRole}</span></div>
+                    <div class="data-row"><span class="data-label">Duration</span><span class="data-value">${candidateData.resumeData.currentDuration}</span></div>
+                    <div class="data-row"><span class="data-label">Previous</span><span class="data-value">${candidateData.resumeData.previousRole}</span></div>
+                </div>
+                <div class="data-card">
+                    <h4>🎓 Education</h4>
+                    <div class="data-row"><span class="data-label">Degree</span><span class="data-value">${candidateData.resumeData.education}</span></div>
+                </div>
+                <div class="data-card">
+                    <h4>🛠️ Normalized Skills</h4>
+                    <div class="skill-tags">${skillTags}</div>
+                </div>`);
+
+            updatePocStatus(1, 'completed');
+
+            await addMessage("Is this information correct?");
+            addChips(["✓ Yes, looks good", "✎ Edit details"], handleResumeConfirm);
+        }
+
+        async function handleResumeConfirm(choice) {
+            updateProgress(3);
+            updatePocStatus(2, 'active');
+
+            showTyping();
+            await new Promise(r => setTimeout(r, 1000));
+            hideTyping();
+
+            await addMessage(`<strong>POC 2: Duplicate Identification</strong><br><br>
+                <span class="status-badge processing">🔍 Checking for duplicates...</span>`);
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            await addMessage(`<span class="status-badge success">✅ No Duplicates Found</span><br><br>
+                Your profile is unique in our system. Checked against:<br>
+                • Email: ${candidateData.email}<br>
+                • Phone: ${candidateData.phone}<br>
+                • Name combination<br><br>
+                <em style="color: #666; font-size: 13px;">Profile moved to staging table for verification.</em>`);
+
+            updatePocStatus(2, 'completed');
+            updateProgress(4);
+            await startVerification();
+        }
+
+        async function startVerification() {
+            updatePocStatus(3, 'active');
+            showTyping();
+            await new Promise(r => setTimeout(r, 800));
+            hideTyping();
+
+            await addMessage(`<strong>POC 3: Verification Agent</strong><br><br>
+                Please upload your <strong>Government ID</strong> (Passport/Driver's License) for identity verification.`);
+            addFileUpload(handleIdUploaded, "JPG, PNG, PDF");
+        }
+
+        async function handleIdUploaded() {
+            await addMessage(`<div class="file-upload uploaded" style="border-style: solid;">
+                <div class="file-icon">✅</div>
+                <div><strong>Government_ID.jpg</strong></div>
+                <div style="font-size: 12px; color: #4caf50;">1.2 MB • Uploaded</div>
+            </div>`, false);
+
+            showTyping();
+            await new Promise(r => setTimeout(r, 1000));
+            hideTyping();
+
+            await addMessage("Please upload your <strong>Experience Letter</strong> from current employer for experience verification.");
+            addFileUpload(handleExpLetterUploaded, "PDF, DOC");
+        }
+
+        async function handleExpLetterUploaded() {
+            await addMessage(`<div class="file-upload uploaded" style="border-style: solid;">
+                <div class="file-icon">✅</div>
+                <div><strong>Experience_Letter.pdf</strong></div>
+                <div style="font-size: 12px; color: #4caf50;">320 KB • Uploaded</div>
+            </div>`, false);
+
+            showTyping();
+            await new Promise(r => setTimeout(r, 2000));
+            hideTyping();
+
+            await addMessage(`<span class="status-badge processing">🔐 AI Verifying Documents...</span>
+                <div class="progress-bar"><div class="progress-fill"></div></div>`);
+
+            await new Promise(r => setTimeout(r, 2500));
+
+            await addMessage(`✅ Verification Complete!
+                <div class="data-card">
+                    <h4>🪪 Identity Verification</h4>
+                    <div class="data-row"><span class="data-label">Document Type</span><span class="data-value">US Passport</span></div>
+                    <div class="data-row"><span class="data-label">Name Match</span><span class="data-value" style="color: #4caf50;">✓ Verified</span></div>
+                    <div class="data-row"><span class="data-label">Document Valid</span><span class="data-value" style="color: #4caf50;">✓ Exp: 2028</span></div>
+                    <div class="data-row"><span class="data-label">Authenticity</span><span class="data-value" style="color: #4caf50;">✓ Genuine</span></div>
+                </div>
+                <div class="data-card">
+                    <h4>💼 Experience Verification</h4>
+                    <div class="data-row"><span class="data-label">Company</span><span class="data-value">ABC Tech Inc.</span></div>
+                    <div class="data-row"><span class="data-label">Role Match</span><span class="data-value" style="color: #4caf50;">✓ Verified</span></div>
+                    <div class="data-row"><span class="data-label">Duration Match</span><span class="data-value" style="color: #4caf50;">✓ Verified</span></div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <span class="status-badge success">🎉 Verification Confidence: 98%</span>
+                </div>`);
+
+            updatePocStatus(3, 'completed');
+            updateProgress(5);
+            await startInterview();
+        }
+
+        async function startInterview() {
+            updatePocStatus(4, 'active');
+            showTyping();
+            await new Promise(r => setTimeout(r, 1000));
+            hideTyping();
+
+            await addMessage(`<strong>POC 4: Interview Question Generation</strong><br><br>
+                All verifications passed! 🎉 Now it's time for your <strong>L1 Video Interview</strong>.<br><br>
+                Our AI has generated 5 personalized questions based on:<br>
+                • Job Description requirements<br>
+                • Your skills and experience<br><br>
+                <strong>📋 Interview Format:</strong><br>
+                • 5 questions<br>
+                • 2 minutes per question<br>
+                • One-way video recording<br>
+                • AI-powered evaluation<br><br>
+                Ready to begin?`);
+
+            addChips(["▶️ Start Interview", "⏰ Schedule Later"], handleInterviewStart);
+        }
+
+        async function handleInterviewStart(choice) {
+            if (choice.includes("Later")) {
+                await addMessage("No problem! We'll send you a link to complete the interview at your convenience.");
+                return;
+            }
+
+            currentQuestion = 0;
+            await showNextQuestion();
+        }
+
+        async function showNextQuestion() {
+            if (currentQuestion >= interviewQuestions.length) {
+                updatePocStatus(4, 'completed');
+                await showResults();
+                return;
+            }
+
+            showTyping();
+            await new Promise(r => setTimeout(r, 800));
+            hideTyping();
+
+            await addMessage(`
+                <div class="question-card">
+                    <div class="question-number">Question ${currentQuestion + 1} of ${interviewQuestions.length}</div>
+                    <div class="question-text">${interviewQuestions[currentQuestion]}</div>
+                </div>
+                <div class="video-area">
+                    <div class="icon">📹</div>
+                    <div style="font-size: 14px; opacity: 0.8;">Camera ready</div>
+                    <button class="record-btn" onclick="recordAnswer()">⏺ Start Recording</button>
+                </div>`);
+        }
+
+        window.recordAnswer = async function() {
+            const videoAreas = document.querySelectorAll('.video-area');
+            const lastVideo = videoAreas[videoAreas.length - 1];
+
+            lastVideo.innerHTML = `
+                <div class="icon">🔴</div>
+                <div style="font-size: 18px; font-weight: 600;">Recording...</div>
+                <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">1:45 remaining</div>
+            `;
+
+            await new Promise(r => setTimeout(r, 2000));
+
+            lastVideo.innerHTML = `
+                <div class="icon">✅</div>
+                <div style="font-size: 16px; font-weight: 600; color: #4caf50;">Response recorded!</div>
+            `;
+
+            currentQuestion++;
+            await new Promise(r => setTimeout(r, 1000));
+            await showNextQuestion();
+        };
+
+        async function showResults() {
+            updatePocStatus(5, 'active');
+            updateProgress(6);
+
+            showTyping();
+            await new Promise(r => setTimeout(r, 1500));
+            hideTyping();
+
+            await addMessage(`<strong>POC 5: Interview Validation & Readiness Scoring</strong><br><br>
+                🎉 Interview Complete! Analyzing your responses...
+                <div class="progress-bar"><div class="progress-fill"></div></div>`);
+
+            await new Promise(r => setTimeout(r, 2500));
+
+            await addMessage(`✅ Results are ready!
+                <div class="score-display">
+                    <div class="score-circle">
+                        <span class="score">${candidateData.interviewScore}</span>
+                        <span class="label">Readiness Score</span>
+                    </div>
+                </div>
+                <div class="data-card">
+                    <h4>📊 Score Breakdown</h4>
+                    <div class="data-row"><span class="data-label">Technical Knowledge</span><span class="data-value" style="color: #4caf50;">${candidateData.scores.technical}/100</span></div>
+                    <div class="data-row"><span class="data-label">Communication</span><span class="data-value" style="color: #4caf50;">${candidateData.scores.communication}/100</span></div>
+                    <div class="data-row"><span class="data-label">Problem Solving</span><span class="data-value" style="color: #4caf50;">${candidateData.scores.problemSolving}/100</span></div>
+                    <div class="data-row"><span class="data-label">Cultural Fit</span><span class="data-value" style="color: #4caf50;">${candidateData.scores.culturalFit}/100</span></div>
+                </div>
+                <div class="data-card">
+                    <h4>✅ Proctoring Status</h4>
+                    <div class="data-row"><span class="data-label">Face Detection</span><span class="data-value" style="color: #4caf50;">✓ Passed</span></div>
+                    <div class="data-row"><span class="data-label">Eye Contact</span><span class="data-value" style="color: #4caf50;">✓ 94%</span></div>
+                    <div class="data-row"><span class="data-label">Environment</span><span class="data-value" style="color: #4caf50;">✓ Clear</span></div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <span class="status-badge success">🎯 Recommendation: PROCEED TO L2</span>
+                </div>`);
+
+            updatePocStatus(5, 'completed');
+            await new Promise(r => setTimeout(r, 1000));
+            await showFinalStatus();
+        }
+
+        async function showFinalStatus() {
+            showTyping();
+            await new Promise(r => setTimeout(r, 800));
+            hideTyping();
+
+            await addMessage(`🎉 <strong>Congratulations, ${candidateData.name}!</strong><br><br>
+                Your profile is now <strong>Verified & Trusted</strong>!
+                <div class="data-card">
+                    <h4>📋 Verification Summary</h4>
+                    <div class="data-row"><span class="data-label">Profile ID</span><span class="data-value">${candidateData.appId}</span></div>
+                    <div class="data-row"><span class="data-label">Readiness Score</span><span class="data-value" style="color: #4caf50;">${candidateData.interviewScore}/100</span></div>
+                    <div class="data-row"><span class="data-label">Status</span><span class="data-value" style="color: #4caf50;">✓ Verified Profile</span></div>
+                </div>
+                <div class="data-card">
+                    <h4>✅ Completed Verification</h4>
+                    <div class="data-row"><span class="data-label">1. Resume Parsing</span><span class="data-value" style="color: #4caf50;">✓</span></div>
+                    <div class="data-row"><span class="data-label">2. Duplicate Check</span><span class="data-value" style="color: #4caf50;">✓</span></div>
+                    <div class="data-row"><span class="data-label">3. Identity & Experience</span><span class="data-value" style="color: #4caf50;">✓</span></div>
+                    <div class="data-row"><span class="data-label">4. L1 Interview</span><span class="data-value" style="color: #4caf50;">✓</span></div>
+                    <div class="data-row"><span class="data-label">5. AI Evaluation</span><span class="data-value" style="color: #4caf50;">✓</span></div>
+                </div>
+                <div class="data-card">
+                    <h4>📅 What's Next?</h4>
+                    <p style="font-size: 14px; color: #555; line-height: 1.5;">Your verified profile is now visible to hiring managers. You'll be notified when matched with relevant opportunities.</p>
+                </div>`);
+
+            await addMessage("Thank you for verifying your profile with us! Is there anything else I can help with?");
+            addChips(["📞 Contact HR", "📄 Download Summary", "🏠 Exit"], handleFinalChoice);
+        }
+
+        async function handleFinalChoice(choice) {
+            if (choice.includes("Exit")) {
+                await addMessage(`Goodbye, ${candidateData.name}! Your profile is now trusted on our platform. 👋<br><br><em style="font-size: 13px; color: #666;">Session ended. You'll be notified for matching opportunities.</em>`);
+            } else if (choice.includes("Contact")) {
+                await addMessage(`You can reach our HR team at:<br><br>📧 hr@zennialpro.com<br>📞 +1-800-ZENNIAL<br><br>Office hours: Mon-Fri, 9 AM - 6 PM PST`);
+                addChips(["🏠 Exit"], handleFinalChoice);
+            } else {
+                await addMessage(`Your verification summary has been sent to <strong>${candidateData.email}</strong>!<br><br>You can access your verified profile anytime.`);
+                addChips(["🏠 Exit"], handleFinalChoice);
+            }
+        }
+
+        // Input handling
+        function handleUserInput() {
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, false);
+            userInput.value = '';
+            disableInput();
+
+            switch (flowState) {
+                case "getName":
+                    handleNameInput(text);
+                    break;
+                case "getEmail":
+                    handleEmailInput(text);
+                    break;
+                case "getPhone":
+                    handlePhoneInput(text);
+                    break;
+            }
+        }
+
+        sendBtn.addEventListener('click', handleUserInput);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleUserInput();
+        });
+
+        // Initialize and start the flow
+        let initialized = false;
+        function init() {
+            if (initialized) return;
+            initialized = true;
+            setTimeout(startFlow, 500);
+        }
+
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            init();
+        } else {
+            document.addEventListener('DOMContentLoaded', init);
+        }
+    </script>
+</body>
+</html>

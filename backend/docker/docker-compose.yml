@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: smartrecruitz-postgres
+    environment:
+      POSTGRES_DB: smartrecruitz
+      POSTGRES_USER: sr_user
+      POSTGRES_PASSWORD: sr_password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sr_user -d smartrecruitz"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: smartrecruitz-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: smartrecruitz-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://sr_user:sr_password@postgres:5432/smartrecruitz
+      REDIS_URL: redis://redis:6379/0
+    env_file:
+      - ../.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../uploads:/app/uploads
+    profiles:
+      - full
+
+  worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.worker
+    container_name: smartrecruitz-worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://sr_user:sr_password@postgres:5432/smartrecruitz
+      REDIS_URL: redis://redis:6379/0
+    env_file:
+      - ../.env
+    volumes:
+      - ../uploads:/app/uploads
+    profiles:
+      - full
+
+volumes:
+  pgdata:

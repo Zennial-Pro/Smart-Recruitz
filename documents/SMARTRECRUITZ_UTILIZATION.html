@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Resource Utilization Report</title>
+<style>
+  @page { size: A4; margin: 11mm 14mm 11mm 14mm;
+    @bottom-left { content: "Resource Utilization (Daily) · Mar–Jun 2026"; font-size: 8pt; color:#9aa3af; }
+    @bottom-right { content: "Page " counter(page) " of " counter(pages); font-size: 8pt; color:#9aa3af; } }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:#1f2733; font-size:9.5pt; margin:0; }
+  h1 { font-size:18pt; font-weight:700; color:#0f766e; margin:0 0 2px; letter-spacing:-0.3px; }
+  .subtitle { color:#6b7280; font-size:10pt; margin:0 0 12px; }
+  h2 { font-size:12pt; font-weight:700; margin:18px 0 6px; color:#111827; page-break-after:avoid; }
+  .meta { width:100%; border-collapse:collapse; font-size:9.5pt; margin-bottom:4px; }
+  .meta td { padding:2.5px 0; border:none; } .meta td:first-child { color:#6b7280; width:120px; font-weight:600; }
+  .kpi { display:flex; gap:8px; margin:10px 0; }
+  .kpi div { flex:1; background:#f0fdfa; border:1px solid #ccfbf1; border-radius:8px; padding:8px 10px; }
+  .kpi .n { font-size:15pt; font-weight:700; color:#0f766e; } .kpi .l { font-size:7.4pt; color:#6b7280; text-transform:uppercase; letter-spacing:.3px; }
+  table.log { width:100%; border-collapse:collapse; font-size:8pt; }
+  table.log thead th { text-align:left; background:#0f766e; color:#fff; font-size:7pt; text-transform:uppercase; letter-spacing:.3px; padding:4px 7px; }
+  table.log thead { display:table-header-group; }
+  table.log td { padding:5px 7px; border-bottom:1px solid #eef0f3; vertical-align:top; }
+  table.log tr { page-break-inside:avoid; }
+  td.d { color:#9aa3af; width:5%; } td.dt { width:14%; white-space:nowrap; font-weight:600; color:#334155; }
+  tr.mh td { background:#f1f5f9; font-weight:700; color:#0f766e; font-size:8pt; letter-spacing:.3px; padding:5px 7px; }
+  table.pgbreak { break-before: page; }
+  .box { background:#f9fafb; border:1px solid #e5e7eb; border-radius:8px; padding:10px 12px; margin:8px 0; font-size:9pt; }
+</style></head><body>
+
+<table class="log "><thead><tr><th style="width:5%">#</th><th style="width:15%">Date</th><th>Work performed</th></tr></thead><tbody><tr class="mh"><td colspan="3">March 2026</td></tr>
+<tr class=""><td class="d">1</td><td class="dt">Mon, 02 Mar</td><td>Project kick-off; went through the requirements and mapped the candidate verification flow end to end</td></tr>
+<tr class=""><td class="d">2</td><td class="dt">Wed, 04 Mar</td><td>Finalised the architecture: async FastAPI backend, Next.js frontend, PostgreSQL, with the AI work split into separate single-purpose agents</td></tr>
+<tr class=""><td class="d">3</td><td class="dt">Thu, 05 Mar</td><td>Designed the Postgres schema: a staging table for raw parsed data and a main table for verified candidates, plus interviews, verifications and a skill taxonomy</td></tr>
+<tr class=""><td class="d">4</td><td class="dt">Fri, 06 Mar</td><td>Set up the repo, the Python virtualenv, Alembic and the local Postgres, and the base service structure</td></tr>
+<tr class=""><td class="d">5</td><td class="dt">Mon, 09 Mar</td><td>Built the FastAPI application factory, the pydantic settings layer and the async SQLAlchemy engine and session</td></tr>
+<tr class=""><td class="d">6</td><td class="dt">Tue, 10 Mar</td><td>Added the SQLAlchemy models for candidates_staging and candidates_main with UUID primary keys and JSONB columns for the parsed profile and analysis</td></tr>
+<tr class=""><td class="d">7</td><td class="dt">Wed, 11 Mar</td><td>Added the interview, interview_question and verification models with their foreign keys back to the candidate</td></tr>
+<tr class=""><td class="d">8</td><td class="dt">Thu, 12 Mar</td><td>Added the skill_taxonomy, uploaded_document and background_task models</td></tr>
+<tr class=""><td class="d">9</td><td class="dt">Fri, 13 Mar</td><td>Set up Alembic and wrote the initial migration, including the pg_trgm extension for fuzzy name search</td></tr>
+<tr class=""><td class="d">10</td><td class="dt">Mon, 16 Mar</td><td>Built the candidate repository: create and fetch staging, and the staging to main promotion logic</td></tr>
+<tr class=""><td class="d">11</td><td class="dt">Tue, 17 Mar</td><td>Built the candidate registration endpoint and service that creates the staging row and generates the candidate ref</td></tr>
+<tr class=""><td class="d">12</td><td class="dt">Wed, 18 Mar</td><td>Set up the async background-task handling with a tasks table that the frontend polls for status</td></tr>
+<tr class=""><td class="d">13</td><td class="dt">Fri, 20 Mar</td><td>Wired up the OpenAI client wrapper and the base agent structure with the prompt files</td></tr>
+<tr class=""><td class="d">14</td><td class="dt">Mon, 23 Mar</td><td>Scaffolded the Next.js app-router frontend and the routing</td></tr>
+<tr class=""><td class="d">15</td><td class="dt">Tue, 24 Mar</td><td>Added the shared shadcn UI components and the ky-based API client</td></tr>
+<tr class=""><td class="d">16</td><td class="dt">Wed, 25 Mar</td><td>Built the onboarding chat shell and the Zustand stores for the chat and onboarding state</td></tr>
+<tr class=""><td class="d">17</td><td class="dt">Thu, 26 Mar</td><td>Worked on the Agent 1 resume-parsing prompt to extract structured fields</td></tr>
+<tr class=""><td class="d">18</td><td class="dt">Mon, 30 Mar</td><td>Got Agent 1 parsing resumes into a structured profile with skills, experience and education</td></tr>
+<tr class=""><td class="d">19</td><td class="dt">Tue, 31 Mar</td><td>Added vision parsing so scanned and image PDFs go through the vision model instead of plain text extraction</td></tr>
+<tr class="mh"><td colspan="3">April 2026</td></tr>
+<tr class=""><td class="d">20</td><td class="dt">Wed, 01 Apr</td><td>Normalised the parsed skills against the skill taxonomy so search and matching stay consistent</td></tr>
+<tr class=""><td class="d">21</td><td class="dt">Thu, 02 Apr</td><td>Added the resume scoring with sub-scores and the analytics it pulls out</td></tr>
+<tr class=""><td class="d">22</td><td class="dt">Mon, 06 Apr</td><td>Wrote the Agent 1 background handler that saves the parsed profile and analysis onto the staging row</td></tr>
+<tr class=""><td class="d">23</td><td class="dt">Tue, 07 Apr</td><td>Built the resume-review card so the candidate confirms the parsed profile before continuing</td></tr>
+<tr class=""><td class="d">24</td><td class="dt">Wed, 08 Apr</td><td>Started Agent 2 (duplicate detection) using a pg_trgm fuzzy match on name plus email and phone to shortlist candidates</td></tr>
+<tr class=""><td class="d">25</td><td class="dt">Thu, 09 Apr</td><td>Finished Agent 2 with the LLM comparison over the shortlist, returning unique, duplicate or uncertain</td></tr>
+<tr class=""><td class="d">26</td><td class="dt">Fri, 10 Apr</td><td>Added the promotion from staging into the main talent pool once a candidate clears the duplicate check</td></tr>
+<tr class=""><td class="d">27</td><td class="dt">Mon, 13 Apr</td><td>Started Agent 3 (ID verification), sending the document image through the vision model</td></tr>
+<tr class=""><td class="d">28</td><td class="dt">Tue, 14 Apr</td><td>Handled Aadhaar, PAN and Passport with the mandatory-document ordering</td></tr>
+<tr class=""><td class="d">29</td><td class="dt">Wed, 15 Apr</td><td>Added the name and DOB match against the claimed details and the document authenticity confidence</td></tr>
+<tr class=""><td class="d">30</td><td class="dt">Thu, 16 Apr</td><td>Built the verification records and the per-document status flow</td></tr>
+<tr class=""><td class="d">31</td><td class="dt">Fri, 17 Apr</td><td>Built the ID upload widget with the step-by-step mandatory-document prompts</td></tr>
+<tr class=""><td class="d">32</td><td class="dt">Mon, 20 Apr</td><td>Worked on the Agent 4 prompt to generate interview questions from the candidate profile</td></tr>
+<tr class=""><td class="d">33</td><td class="dt">Tue, 21 Apr</td><td>Got Agent 4 generating questions targeted at the candidate's actual skills with expected-answer points</td></tr>
+<tr class=""><td class="d">34</td><td class="dt">Wed, 22 Apr</td><td>Worked on the Agent 5 scoring prompt and the evaluation rubric</td></tr>
+<tr class=""><td class="d">35</td><td class="dt">Thu, 23 Apr</td><td>Finished Agent 5 scoring the transcript into an overall score, the L1 pass/fail and a recommendation</td></tr>
+<tr class=""><td class="d">36</td><td class="dt">Fri, 24 Apr</td><td>Wired the interview question and answer loop into the chatbot</td></tr>
+<tr class=""><td class="d">37</td><td class="dt">Mon, 27 Apr</td><td>Built the interview recording and transcription UI with the video widget</td></tr>
+<tr class=""><td class="d">38</td><td class="dt">Tue, 28 Apr</td><td>Added the scoring task polling and cached the result on the candidate so it loads instantly</td></tr>
+<tr class=""><td class="d">39</td><td class="dt">Wed, 29 Apr</td><td>Showed the readiness score, L1 status and recommendation on the result screen</td></tr>
+<tr class=""><td class="d">40</td><td class="dt">Thu, 30 Apr</td><td>Added the re-interview controls so an admin can grant another attempt</td></tr></tbody></table>
+<table class="log pgbreak"><thead><tr><th style="width:5%">#</th><th style="width:15%">Date</th><th>Work performed</th></tr></thead><tbody><tr class="mh"><td colspan="3">May 2026</td></tr>
+<tr class=""><td class="d">41</td><td class="dt">Mon, 04 May</td><td>Reworked the onboarding chatbot into a proper state machine, one step at a time</td></tr>
+<tr class=""><td class="d">42</td><td class="dt">Tue, 05 May</td><td>Made the chatbot sessions resumable by persisting the onboarding state to localStorage</td></tr>
+<tr class=""><td class="d">43</td><td class="dt">Wed, 06 May</td><td>Added the email lookup and restore so returning candidates pick up exactly where they left off</td></tr>
+<tr class=""><td class="d">44</td><td class="dt">Thu, 07 May</td><td>Cleaned up the typed chat message rendering and the flow handling</td></tr>
+<tr class=""><td class="d">45</td><td class="dt">Fri, 08 May</td><td>Got the new requirement set from the client, went through it and planned the changes</td></tr>
+<tr class=""><td class="d">46</td><td class="dt">Mon, 11 May</td><td>Added the candidate fields they asked for (current CTC, expected CTC, notice period, working status) with the migration</td></tr>
+<tr class=""><td class="d">47</td><td class="dt">Tue, 12 May</td><td>Added current and preferred location, and made Aadhaar and PAN mandatory in the ID verification step</td></tr>
+<tr class=""><td class="d">48</td><td class="dt">Wed, 13 May</td><td>Added the resume score and the general analytics from the resume (tenure, employment gaps, company-type mix)</td></tr>
+<tr class=""><td class="d">49</td><td class="dt">Thu, 14 May</td><td>Captured the Git and LinkedIn URLs and added the LinkedIn vs resume cross check via the Coresignal lookup</td></tr>
+<tr class=""><td class="d">50</td><td class="dt">Fri, 15 May</td><td>Added the service vs product company classification, the value-addition check, certifications and the resume pros and cons</td></tr>
+<tr class=""><td class="d">51</td><td class="dt">Mon, 18 May</td><td>Stored the interview video link and the full interview context, and made sure everything persists to the DB</td></tr>
+<tr class=""><td class="d">52</td><td class="dt">Tue, 19 May</td><td>Added LMS course recommendations for profiles that come from the LMS, and set up Zoho for project tracking</td></tr>
+<tr class=""><td class="d">53</td><td class="dt">Wed, 20 May</td><td>Built the hiring manager dashboard with the pool stats, domain breakdown and recent candidates</td></tr>
+<tr class=""><td class="d">54</td><td class="dt">Thu, 21 May</td><td>Built the JD search with the weighted mandatory/preferred skill-match ranking and the candidate detail page</td></tr>
+<tr class=""><td class="d">55</td><td class="dt">Fri, 22 May</td><td>Wrapped up the candidate data-model changes and ran the migrations</td></tr>
+<tr class="is"><td class="d">56</td><td class="dt">Mon, 25 May</td><td>Interview as a Service: Set up the HeyGen LiveAvatar account and got the streaming API key</td></tr>
+<tr class="is"><td class="d">57</td><td class="dt">Tue, 26 May</td><td>Interview as a Service: Did a basic LiveAvatar demo, got the avatar WebRTC stream rendering in the browser</td></tr>
+<tr class=""><td class="d">58</td><td class="dt">Wed, 27 May</td><td>Tidied up the hiring manager search, added pagination and the filters</td></tr>
+<tr class="is"><td class="d">59</td><td class="dt">Thu, 28 May</td><td>Interview as a Service: Got the avatar to speak by sending text through the LiveAvatar session repeat call</td></tr>
+<tr class="is"><td class="d">60</td><td class="dt">Fri, 29 May</td><td>Interview as a Service: Fixed the avatar going silent; it was calling repeat before the session reached the connected state, so I fixed the event timing</td></tr>
+<tr class="mh"><td colspan="3">June 2026</td></tr>
+<tr class="is"><td class="d">61</td><td class="dt">Mon, 01 Jun</td><td>Interview as a Service: Hooked up Deepgram nova-2 streaming speech to text over a websocket for the candidate audio</td></tr>
+<tr class="is"><td class="d">62</td><td class="dt">Tue, 02 Jun</td><td>Interview as a Service: Got the realtime transcript working with the avatar, handling the interim and final results</td></tr>
+<tr class="is"><td class="d">63</td><td class="dt">Wed, 03 Jun</td><td>Interview as a Service: Wired the basic question and follow-up loop, sending the transcript to the model and the reply back to the avatar</td></tr>
+<tr class=""><td class="d">64</td><td class="dt">Thu, 04 Jun</td><td>Got LMS access from the team and went through how SmartRecruitz would plug into it</td></tr>
+<tr class=""><td class="d">65</td><td class="dt">Fri, 05 Jun</td><td>Started the LMS integration: built the recruitment module and the candidate to LMS-user mapping table</td></tr>
+<tr class=""><td class="d">66</td><td class="dt">Mon, 08 Jun</td><td>Wired the approval flow and the short-lived token handoff between the LMS and SmartRecruitz</td></tr>
+<tr class=""><td class="d">67</td><td class="dt">Tue, 09 Jun</td><td>Started merging the SmartRecruitz database into the LMS Postgres database</td></tr>
+<tr class=""><td class="d">68</td><td class="dt">Wed, 10 Jun</td><td>Moved the tables into the LMS application schema with the lms_recruit_ prefix and matched their naming conventions</td></tr>
+<tr class=""><td class="d">69</td><td class="dt">Thu, 11 Jun</td><td>Pointed the FastAPI backend at the shared LMS database, updated the models, FKs and the Alembic version schema, and verified it still worked</td></tr>
+<tr class=""><td class="d">70</td><td class="dt">Fri, 12 Jun</td><td>Wired the location filter into the hiring manager search, matching current or preferred location</td></tr>
+<tr class=""><td class="d">71</td><td class="dt">Mon, 15 Jun</td><td>Started the standalone auth: argon2 password hashing and HS256 JWTs, and set up the Google sign in</td></tr>
+<tr class=""><td class="d">72</td><td class="dt">Tue, 16 Jun</td><td>Finished the auth: the hiring manager login, the get_current_user dependency and the route guards</td></tr>
+<tr class="is"><td class="d">73</td><td class="dt">Wed, 17 Jun</td><td>Interview as a Service: Tested the LiveAvatar interview demo end to end</td></tr>
+<tr class="is"><td class="d">74</td><td class="dt">Thu, 18 Jun</td><td>Stabilised both apps, sorted the env config and the run scripts, and wrote up the docs</td></tr>
+<tr class=""><td class="d">75</td><td class="dt">Fri, 19 Jun</td><td>Added the Google sign in for both candidates and hiring managers, with the intent-based OAuth callback assigning the role</td></tr></tbody></table>
+
+</body></html>

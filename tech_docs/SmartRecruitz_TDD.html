@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartRecruitz — Technical Design Document</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page { margin: 15mm; size: A4; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: #000;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  @media print {
+    body { font-size: 12px; }
+    .page-break { page-break-before: always; }
+  }
+
+  /* Cover Page */
+  .cover-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 80px;
+    border-bottom: 3px solid #000;
+  }
+
+  .cover-page::before, .cover-page::after { display: none; }
+
+  .cover-badge {
+    display: inline-block;
+    border: 2px solid #000;
+    color: #000;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+
+  .cover-title {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    color: #000;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    font-weight: 300;
+    color: #444;
+    margin-bottom: 50px;
+  }
+
+  .cover-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 500px;
+  }
+
+  .cover-meta-item {
+    padding: 16px 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .cover-meta-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #666;
+    margin-bottom: 4px;
+  }
+
+  .cover-meta-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+  }
+
+  /* Content */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 80px;
+  }
+
+  /* Section Headers */
+  .section-number {
+    display: inline-block;
+    background: #000;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 36px;
+    font-weight: 700;
+    font-size: 16px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #000;
+    margin-bottom: 8px;
+    display: inline;
+    vertical-align: middle;
+  }
+
+  .section-header {
+    margin-bottom: 30px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #000;
+  }
+
+  .section-desc {
+    color: #555;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+    margin: 35px 0 15px;
+    padding-left: 14px;
+    border-left: 4px solid #000;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+    margin: 25px 0 10px;
+  }
+
+  p { margin-bottom: 14px; color: #333; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 13px;
+  }
+
+  thead th {
+    background: #000;
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: top;
+  }
+
+  tbody tr:nth-child(even) { background: #f8f8f8; }
+
+  .table-highlight th { background: #333; }
+
+  /* Flow Diagram */
+  .flow-container {
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 30px;
+    margin: 20px 0;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0;
+    position: relative;
+  }
+
+  .flow-step:not(:last-child) {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+
+  .flow-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 22px;
+    top: 46px;
+    bottom: -8px;
+    width: 2px;
+    background: #999;
+  }
+
+  .flow-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+    flex-shrink: 0;
+    margin-right: 16px;
+    background: #000;
+  }
+
+  .flow-icon.agent { background: #000; }
+  .flow-icon.db { background: #555; }
+  .flow-icon.ext { background: #888; }
+  .flow-icon.done { background: #000; }
+
+  .flow-body { flex: 1; }
+  .flow-title { font-weight: 700; font-size: 14px; color: #000; }
+  .flow-detail { font-size: 12px; color: #555; margin-top: 2px; }
+  .flow-tech { display: inline-block; background: #eee; color: #000; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-top: 4px; }
+
+  .flow-arrow {
+    text-align: center;
+    padding: 4px 0;
+    color: #999;
+    font-size: 18px;
+    padding-left: 22px;
+  }
+
+  /* Info Boxes */
+  .info-box {
+    background: #f5f5f5;
+    border-left: 4px solid #000;
+    padding: 14px 18px;
+    border-radius: 0 4px 4px 0;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+
+  .info-box strong { color: #000; }
+
+  .tech-box {
+    background: #f5f5f5;
+    border-left: 4px solid #666;
+    padding: 14px 18px;
+    border-radius: 0 4px 4px 0;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+
+  /* Architecture Diagram */
+  .arch-layer {
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    padding: 20px;
+    margin: 10px 0;
+    position: relative;
+  }
+
+  .arch-layer-title {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: white;
+    padding: 0 10px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .arch-items {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+
+  .arch-item {
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .arch-item.highlight {
+    background: #e8e8e8;
+    border-color: #000;
+    color: #000;
+    font-weight: 700;
+  }
+
+  .arch-arrow {
+    text-align: center;
+    font-size: 20px;
+    color: #999;
+    margin: 4px 0;
+  }
+
+  /* Status Flow */
+  .status-badge {
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .status-badge.pending { background: #eee; color: #000; }
+  .status-badge.verified { background: #ddd; color: #000; }
+  .status-badge.pool { background: #000; color: #fff; }
+  .status-badge.failed { background: #eee; color: #000; border: 1px dashed #999; }
+
+  /* Agent Cards */
+  .agent-card {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+
+  .agent-card-header {
+    background: #000;
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .agent-card-number {
+    background: #fff;
+    color: #000;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .agent-card-title { font-weight: 700; font-size: 16px; }
+  .agent-card-model { font-size: 11px; color: rgba(255,255,255,0.6); }
+
+  .agent-card-body { padding: 20px; }
+
+  .agent-io {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .agent-io-box {
+    background: #f8f8f8;
+    border-radius: 4px;
+    padding: 14px;
+    border: 1px solid #eee;
+  }
+
+  .agent-io-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 8px;
+  }
+
+  .agent-io-list {
+    list-style: none;
+    padding: 0;
+    font-size: 12px;
+  }
+
+  .agent-io-list li {
+    padding: 3px 0;
+    color: #333;
+  }
+
+  .agent-io-list li::before {
+    content: '→ ';
+    color: #000;
+    font-weight: 700;
+  }
+
+  /* DB Schema Table */
+  .schema-table th:first-child { width: 25%; }
+  .schema-table th:nth-child(2) { width: 20%; }
+
+  .col-type {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    background: #eee;
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  .col-pk { color: #000; font-weight: 700; }
+  .col-fk { color: #000; font-weight: 600; text-decoration: underline; }
+
+  .cost-total td {
+    font-weight: 700;
+    background: #eee;
+    border-top: 2px solid #000;
+  }
+
+  .page-footer {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    font-size: 11px;
+    border-top: 1px solid #ddd;
+    margin-top: 40px;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .toc-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .toc-list li span:first-child { font-weight: 600; }
+
+  .not-scope {
+    color: #999;
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  .not-scope-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+  }
+
+  .not-scope-item {
+    background: #f8f9fb;
+    border: 1px dashed #ccc;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #999;
+    text-decoration: line-through;
+  }
+
+  .db-relationship {
+    font-family: 'Courier New', monospace;
+    background: #f8f9fb;
+    border: 1px solid #e0e4ea;
+    border-radius: 8px;
+    padding: 20px;
+    font-size: 13px;
+    line-height: 2;
+    margin: 16px 0;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  ul { padding-left: 20px; margin: 10px 0; }
+  li { margin: 4px 0; color: #555; }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover-page">
+  <div class="cover-title">SmartRecruitz</div>
+  <div class="cover-subtitle">Technical Design Document</div>
+
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="content page-break">
+  <div class="section-header">
+    <h1>Table of Contents</h1>
+  </div>
+  <ul class="toc-list">
+    <li><span>1. Scope & Objectives</span><span></span></li>
+    <li><span>2. Tech Stack</span><span></span></li>
+    <li><span>3. Candidate Pipeline Flow</span><span></span></li>
+    <li><span>4. Agent Breakdown — All 5 Agents</span><span></span></li>
+    <li><span>5. Architecture — 3-Layer Design</span><span></span></li>
+    <li><span>6. Database Schema — 11 Tables</span><span></span></li>
+    <li><span>7. API Endpoints</span><span></span></li>
+    <li><span>8. Candidate Status Flow</span><span></span></li>
+  </ul>
+</div>
+
+<!-- SECTION 1: SCOPE -->
+<div class="content page-break">
+  <div class="section-header">
+    <span class="section-number">1</span>
+    <h1>Scope & Objectives</h1>
+    <p class="section-desc">What we're building and what we're not building in this phase.</p>
+  </div>
+
+  <h2>Objective</h2>
+  <p>Build 5 AI-powered agents that process candidates from resume upload to verified talent pool entry. Each agent runs independently, called sequentially through a chatbot-style frontend interface.</p>
+
+  <h2>In Scope — 5 Agents</h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Agent</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td><strong>Resume Parser & Skill Normalization</strong></td><td>Parse resume, extract structured data, normalize skills to taxonomy</td></tr>
+      <tr><td>2</td><td><strong>Duplicate Detection</strong></td><td>Detect existing profiles using DB + AI semantic matching</td></tr>
+      <tr><td>3</td><td><strong>ID Verification</strong></td><td>Verify identity documents against claimed data</td></tr>
+      <tr><td>4</td><td><strong>Interview Question Generation</strong></td><td>Generate personalized interview questions from candidate profile</td></tr>
+      <tr><td>5</td><td><strong>Interview Scoring & Readiness</strong></td><td>Score interview transcript, assign readiness score</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<!-- SECTION 2: TECH STACK -->
+<div class="content">
+  <div class="section-header">
+    <span class="section-number">2</span>
+    <h1>Tech Stack</h1>
+    <p class="section-desc">Technologies and frameworks used across the platform.</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>Technology</th><th>Rationale</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Backend API</td><td><strong>FastAPI</strong> (Python 3.12)</td><td>Async, auto-docs, type-safe, fast</td></tr>
+      <tr><td>AI Model</td><td><strong>Claude Sonnet</strong> (Anthropic SDK)</td><td>All 5 agents — text + document/image analysis</td></tr>
+      <tr><td>Database</td><td><strong>PostgreSQL</strong></td><td>JSONB for flexible data, relational for structured</td></tr>
+      <tr><td>ORM</td><td><strong>SQLAlchemy</strong> (async)</td><td>Type-safe models, migrations via Alembic</td></tr>
+      <tr><td>Task Queue</td><td><strong>ARQ + Redis</strong></td><td>Async background processing (AI calls take 5-15 sec)</td></tr>
+      <tr><td>Validation</td><td><strong>Pydantic</strong></td><td>Input/output schema validation</td></tr>
+      <tr><td>File Storage</td><td><strong>Local</strong> (dev) / <strong>S3</strong> (prod)</td><td>Resume, ID document storage</td></tr>
+      <tr><td>Containers</td><td><strong>Docker + Compose</strong></td><td>Postgres, Redis, app, worker in one command</td></tr>
+    </tbody>
+  </table>
+
+  <div class="info-box">
+    <strong>Why no LangChain / LangGraph?</strong> All agents are single-call to Claude — no chaining, no branching, no AI-controlled flow. The pipeline is linear and code-controlled. Anthropic SDK directly is simpler, faster, and easier to debug.
+  </div>
+</div>
+
+<!-- SECTION 3: PIPELINE FLOW -->
+<div class="content page-break">
+  <div class="section-header">
+    <span class="section-number">3</span>
+    <h1>Candidate Pipeline Flow</h1>
+    <p class="section-desc">End-to-end journey from resume upload to talent pool entry.</p>
+  </div>
+
+  <div class="flow-container">
+    <div class="flow-step">
+      <div class="flow-icon db">IN</div>
+      <div class="flow-body">
+        <div class="flow-title">Candidate Registration</div>
+        <div class="flow-detail">Chatbot collects name, email, phone — saved to database. No AI needed.</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-step">
+      <div class="flow-icon agent">A1</div>
+      <div class="flow-body">
+        <div class="flow-title">Agent 1 — Resume Parser & Skill Normalization</div>
+        <div class="flow-detail">Candidate uploads resume. AI reads PDF/DOCX/Image directly, extracts all fields, normalizes skills to standard taxonomy, identifies domains, infers implied skills. Also does quick duplicate pre-check (email/phone exact match).</div>
+        <div class="flow-tech">Claude Sonnet (with file attached)</div>
+        <div class="flow-detail" style="margin-top:4px;">→ Saved to <strong>candidates_staging</strong> (status: PENDING)</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-step">
+      <div class="flow-icon agent">A2</div>
+      <div class="flow-body">
+        <div class="flow-title">Agent 2 — Duplicate Detection</div>
+        <div class="flow-detail"><strong>Step 1 (DB — free):</strong> Query candidates_main for potential matches using email, phone, fuzzy name, company+dates. Narrows thousands → 5-10 candidates.<br>
+        <strong>Step 2 (AI — one call):</strong> Claude compares new candidate against 5-10 matches. Semantic name matching (Bob=Robert), timeline validation, confidence scoring.</div>
+        <div class="flow-tech">DB Query + Claude Sonnet</div>
+        <div class="flow-detail" style="margin-top:4px;">→ UNIQUE: Move to <strong>candidates_main</strong> (status: VERIFIED)<br>→ DUPLICATE (>75%): Merge or reject<br>→ UNCERTAIN (50-75%): Flag for HR review</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-step">
+      <div class="flow-icon agent">A3</div>
+      <div class="flow-body">
+        <div class="flow-title">Agent 3 — ID Verification</div>
+        <div class="flow-detail">Candidate uploads ID document (Aadhaar/PAN/Passport). AI reads image, extracts text via OCR, checks for tampering indicators, compares extracted data against claimed registration data.</div>
+        <div class="flow-tech">Claude Sonnet (with image attached)</div>
+        <div class="flow-detail" style="margin-top:4px;">→ VERIFIED: status → IDENTITY_VERIFIED<br>→ FAILED: status → VERIFICATION_FAILED<br><em>Note: No connection to government databases — internal consistency check only.</em></div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-step">
+      <div class="flow-icon agent">A4</div>
+      <div class="flow-body">
+        <div class="flow-title">Agent 4 — Interview Question Generation</div>
+        <div class="flow-detail">AI analyzes candidate's specific experience, skills, and target role. Generates 10-15 personalized questions that target claimed expertise. Each question is hashed and checked against history to prevent repetition.</div>
+        <div class="flow-tech">Claude Sonnet</div>
+        <div class="flow-detail" style="margin-top:4px;">→ Questions + expected answers stored in DB. Interviewer guide generated.</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-step">
+      <div class="flow-icon ext">VI</div>
+      <div class="flow-body">
+        <div class="flow-title">Video Interview (External — Interview as Service Module)</div>
+        <div class="flow-detail">Candidate records video answers. External service handles proctoring, face matching, liveness detection. SmartRecruitz receives the transcript + genuineness flags.</div>
+        <div class="flow-tech">Separate Module — Not in this build</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-step">
+      <div class="flow-icon agent">A5</div>
+      <div class="flow-body">
+        <div class="flow-title">Agent 5 — Interview Scoring & Readiness</div>
+        <div class="flow-detail">AI evaluates interview transcript against expected answers from Agent 4. Scores each answer (CORRECT/PARTIAL/INCORRECT), assesses technical knowledge and communication, generates overall readiness score.</div>
+        <div class="flow-tech">Claude Sonnet</div>
+        <div class="flow-detail" style="margin-top:4px;">→ Score ≥ 60%: status → <strong>TALENT_POOL</strong> ✅<br>→ Score < 60%: status → INTERVIEW_FAILED (retry after 30 days)</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-step">
+      <div class="flow-icon done">✓</div>
+      <div class="flow-body">
+        <div class="flow-title">Verified Talent Pool</div>
+        <div class="flow-detail">Candidate is now verified, interviewed, and scored. Visible to hiring managers for job matching (Agent 6 — future phase).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: AGENT BREAKDOWN -->
+<div class="content page-break">
+  <div class="section-header">
+    <span class="section-number">4</span>
+    <h1>Agent Breakdown</h1>
+    <p class="section-desc">Detailed input, output, and AI model for each agent.</p>
+  </div>
+
+  <!-- Agent 1 -->
+  <div class="agent-card">
+    <div class="agent-card-header">
+      <div class="agent-card-number">1</div>
+      <div>
+        <div class="agent-card-title">Resume Parser & Skill Normalization</div>
+        <div class="agent-card-model">Claude Sonnet — with PDF/DOCX/Image file attached</div>
+      </div>
+    </div>
+    <div class="agent-card-body">
+      <p>Parses unstructured resumes into structured candidate profiles. Normalizes skills to standard taxonomy. Identifies domains per experience entry and calculates domain-wise experience.</p>
+
+      <div class="agent-io">
+        <div class="agent-io-box">
+          <div class="agent-io-label">Input</div>
+          <ul class="agent-io-list">
+            <li>Resume file (PDF, DOCX, or Image)</li>
+            <li>Candidate reference ID</li>
+            <li>Extraction config flags</li>
+          </ul>
+        </div>
+        <div class="agent-io-box">
+          <div class="agent-io-label">Output</div>
+          <ul class="agent-io-list">
+            <li>Personal info (name, email, phone, title)</li>
+            <li>Experience entries with domain classification</li>
+            <li>Education, certifications, projects</li>
+            <li>Normalized skills with proficiency levels</li>
+            <li>Implied skills with confidence scores</li>
+            <li>Domain-wise experience breakdown</li>
+            <li>Overall confidence score (0-1)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Quick Duplicate Pre-Check:</strong> After parsing, does an exact email/phone match against candidates_main (DB query, no AI). Flags obvious duplicates immediately — saves an AI call.
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent 2 -->
+  <div class="agent-card">
+    <div class="agent-card-header">
+      <div class="agent-card-number">2</div>
+      <div>
+        <div class="agent-card-title">Duplicate Detection</div>
+        <div class="agent-card-model">DB Query (free) + Claude Sonnet (one call)</div>
+      </div>
+    </div>
+    <div class="agent-card-body">
+      <p>Two-step process to find duplicates without sending all records to AI.</p>
+
+      <h3>Step 1 — Database Filtering (Free, Milliseconds)</h3>
+      <table>
+        <thead class="table-highlight"><tr><th>Query</th><th>What It Finds</th></tr></thead>
+        <tbody>
+          <tr><td>Email exact match</td><td>Same email in candidates_main</td></tr>
+          <tr><td>Phone exact match (normalized)</td><td>Same phone after removing +, -, spaces</td></tr>
+          <tr><td>Fuzzy name match (pg_trgm)</td><td>Similar names (score > 80%)</td></tr>
+          <tr><td>Company + dates overlap</td><td>Same employer in same period</td></tr>
+        </tbody>
+      </table>
+      <p>Narrows thousands of records → <strong>5-10 potential matches</strong>.</p>
+
+      <h3>Step 2 — AI Verification (One Claude Call)</h3>
+      <div class="agent-io">
+        <div class="agent-io-box">
+          <div class="agent-io-label">Sent to AI</div>
+          <ul class="agent-io-list">
+            <li>New candidate profile</li>
+            <li>5-10 potential matches from DB</li>
+            <li>Confidence threshold (default: 0.75)</li>
+          </ul>
+        </div>
+        <div class="agent-io-box">
+          <div class="agent-io-label">AI Returns</div>
+          <ul class="agent-io-list">
+            <li>Duplicate yes/no + confidence %</li>
+            <li>Match evidence (name, phone, experience)</li>
+            <li>Semantic analysis (Bob = Robert)</li>
+            <li>Recommendation: MERGE / REJECT / REVIEW</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Name alone is never enough.</strong> AI only flags duplicates when name + at least one other signal match (phone, email, company+dates, education+year).
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent 3 -->
+  <div class="agent-card page-break">
+    <div class="agent-card-header">
+      <div class="agent-card-number">3</div>
+      <div>
+        <div class="agent-card-title">ID Verification</div>
+        <div class="agent-card-model">Claude Sonnet — with ID document image attached</div>
+      </div>
+    </div>
+    <div class="agent-card-body">
+      <p>Verifies candidate identity by reading uploaded ID documents and comparing against claimed registration data.</p>
+
+      <div class="agent-io">
+        <div class="agent-io-box">
+          <div class="agent-io-label">Input</div>
+          <ul class="agent-io-list">
+            <li>ID document image (Aadhaar / PAN / Passport)</li>
+            <li>Claimed data from registration (name, DOB, gender)</li>
+          </ul>
+        </div>
+        <div class="agent-io-box">
+          <div class="agent-io-label">Output</div>
+          <ul class="agent-io-list">
+            <li>Extracted data from document (OCR)</li>
+            <li>Field-by-field match scores (name, DOB, etc.)</li>
+            <li>Document authenticity check (tampering indicators)</li>
+            <li>Overall verification status + confidence</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tech-box">
+        <strong>Important:</strong> We do NOT connect to Aadhaar/PAN government databases. We verify <strong>internal consistency</strong> between what the document says and what the candidate claimed during registration.
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent 4 -->
+  <div class="agent-card">
+    <div class="agent-card-header">
+      <div class="agent-card-number">4</div>
+      <div>
+        <div class="agent-card-title">Interview Question Generation</div>
+        <div class="agent-card-model">Claude Sonnet</div>
+      </div>
+    </div>
+    <div class="agent-card-body">
+      <p>Generates personalized L1 interview questions based on candidate's actual experience and target role.</p>
+
+      <div class="agent-io">
+        <div class="agent-io-box">
+          <div class="agent-io-label">Input</div>
+          <ul class="agent-io-list">
+            <li>Candidate profile + skill profile (from Agent 1)</li>
+            <li>Experience highlights with responsibilities</li>
+            <li>Target role + generic role template</li>
+            <li>Question config (count, difficulty, categories)</li>
+          </ul>
+        </div>
+        <div class="agent-io-box">
+          <div class="agent-io-label">Output</div>
+          <ul class="agent-io-list">
+            <li>10-15 personalized questions</li>
+            <li>Category per question (Technical / Behavioral / Experience)</li>
+            <li>Expected answer points for each question</li>
+            <li>Follow-up questions</li>
+            <li>Interviewer guide (focus areas, red flags)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Question Non-Repetition</h3>
+      <table>
+        <thead><tr><th>Method</th><th>How It Works</th></tr></thead>
+        <tbody>
+          <tr><td>Question Hashing</td><td>Each question is hashed and stored — prevents exact duplicates</td></tr>
+          <tr><td>Semantic Check</td><td>AI compares against recent history — prevents paraphrased duplicates</td></tr>
+          <tr><td>Experience Targeting</td><td>Questions target unique experience — naturally different per candidate</td></tr>
+          <tr><td>Candidate History</td><td>If re-applying, system knows previous questions — never repeats</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Agent 5 -->
+  <div class="agent-card">
+    <div class="agent-card-header">
+      <div class="agent-card-number">5</div>
+      <div>
+        <div class="agent-card-title">Interview Scoring & Readiness</div>
+        <div class="agent-card-model">Claude Sonnet</div>
+      </div>
+    </div>
+    <div class="agent-card-body">
+      <p>Analyzes interview transcript and scores each answer against the expected answer points generated by Agent 4.</p>
+
+      <div class="agent-io">
+        <div class="agent-io-box">
+          <div class="agent-io-label">Input</div>
+          <ul class="agent-io-list">
+            <li>Interview transcript (from video service)</li>
+            <li>Questions + expected answers (from Agent 4)</li>
+            <li>Evaluation criteria</li>
+          </ul>
+        </div>
+        <div class="agent-io-box">
+          <div class="agent-io-label">Output</div>
+          <ul class="agent-io-list">
+            <li>Overall score (0-100)</li>
+            <li>Pass/Fail status (threshold: 60%)</li>
+            <li>Per-question score + quality assessment</li>
+            <li>Category breakdown (technical, communication, etc.)</li>
+            <li>Recommendation (PROCEED / REJECT / REVIEW)</li>
+            <li>Readiness level</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: ARCHITECTURE -->
+<div class="content page-break">
+  <div class="section-header">
+    <span class="section-number">5</span>
+    <h1>Architecture — 3-Layer Design</h1>
+    <p class="section-desc">Clean separation between HTTP, business logic, and AI processing.</p>
+  </div>
+
+  <div class="arch-layer">
+    <div class="arch-layer-title">API Layer — app/api/v1/</div>
+    <p>Thin HTTP routes. Receives requests, validates input, returns task_id or results. No business logic.</p>
+    <div class="arch-items">
+      <div class="arch-item">candidates.py</div>
+      <div class="arch-item">agent1_resume_parser.py</div>
+      <div class="arch-item">agent2_duplicate.py</div>
+      <div class="arch-item">agent3_verification.py</div>
+      <div class="arch-item">agent4_question_gen.py</div>
+      <div class="arch-item">agent5_interview_score.py</div>
+      <div class="arch-item">tasks.py</div>
+    </div>
+  </div>
+  <div class="arch-arrow">▼</div>
+  <div class="arch-layer">
+    <div class="arch-layer-title">Service Layer — app/services/</div>
+    <p>Business logic. Database operations, candidate state management, triggers agents, moves data between tables.</p>
+    <div class="arch-items">
+      <div class="arch-item">candidate_service.py</div>
+      <div class="arch-item">skill_service.py</div>
+      <div class="arch-item">interview_service.py</div>
+      <div class="arch-item highlight">onboarding_orchestrator.py</div>
+    </div>
+  </div>
+  <div class="arch-arrow">▼</div>
+  <div class="arch-layer">
+    <div class="arch-layer-title">Agent Layer — app/agents/</div>
+    <p>Pure AI logic. Builds prompts, calls Claude, parses responses. No database access. Testable in isolation by mocking the Claude client.</p>
+    <div class="arch-items">
+      <div class="arch-item highlight">base.py (BaseAgent)</div>
+      <div class="arch-item">agent1_resume_parser.py</div>
+      <div class="arch-item">agent2_duplicate.py</div>
+      <div class="arch-item">agent3_verification.py</div>
+      <div class="arch-item">agent4_question_gen.py</div>
+      <div class="arch-item">agent5_interview_score.py</div>
+    </div>
+  </div>
+
+  <h2>Background Processing Flow</h2>
+  <div class="flow-container">
+    <div class="flow-step">
+      <div class="flow-icon db">1</div>
+      <div class="flow-body">
+        <div class="flow-title">API receives request</div>
+        <div class="flow-detail">Creates a background_task record (status: QUEUED) and returns task_id to frontend immediately.</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step">
+      <div class="flow-icon agent">2</div>
+      <div class="flow-body">
+        <div class="flow-title">ARQ Worker picks up the job from Redis</div>
+        <div class="flow-detail">Worker calls the appropriate Agent → Agent calls Claude API → gets response.</div>
+      </div>
+    </div>
+    <div class="flow-arrow">↓</div>
+    <div class="flow-step">
+      <div class="flow-icon db">3</div>
+      <div class="flow-body">
+        <div class="flow-title">Worker saves result to database</div>
+        <div class="flow-detail">Updates background_task (status: COMPLETED). Frontend polls GET /tasks/{id} and gets result.</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Shared Infrastructure</h2>
+  <table>
+    <thead><tr><th>Component</th><th>Location</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Claude Client</strong></td><td>app/core/claude_client.py</td><td>Wraps Anthropic SDK. send_text() for text agents, send_vision() for file/image agents. Retry logic, token tracking.</td></tr>
+      <tr><td><strong>File Storage</strong></td><td>app/core/file_storage.py</td><td>Upload/download files. Local disk (dev) or S3 (prod). get_base64() for sending to Claude Vision.</td></tr>
+      <tr><td><strong>Task Manager</strong></td><td>app/core/background_tasks.py</td><td>Enqueues jobs to Redis via ARQ. Creates DB tracking record. Returns task_id.</td></tr>
+      <tr><td><strong>Base Agent</strong></td><td>app/agents/base.py</td><td>Abstract base class. All 5 agents extend this. Loads prompts from text files.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 6: DATABASE SCHEMA -->
+<div class="content page-break">
+  <div class="section-header">
+    <span class="section-number">6</span>
+    <h1>Database Schema — 11 Tables</h1>
+    <p class="section-desc">PostgreSQL database design for the candidate pipeline.</p>
+  </div>
+
+  <h2>Table Relationships</h2>
+  <div class="db-relationship">candidates_staging (temporary, raw JSONB from Agent 1)
+        │
+        │ Agent 2 moves unique candidates
+        ▼
+candidates_main (verified, normalized)
+   ├── candidate_skills ──→ skill_taxonomy
+   ├── candidate_experiences
+   ├── candidate_educations
+   ├── verifications (Agent 3)
+   └── interviews ──→ interview_questions (Agent 4 + 5)
+
+skill_taxonomy (master skill list)
+uploaded_documents (resumes, ID docs)
+background_tasks (async job tracking)</div>
+
+  <div class="info-box">
+    <strong>Design Decision:</strong> candidates_staging stores raw data as JSONB (not normalized) because it may be rejected or merged. Only when moved to candidates_main does data get normalized into child tables.
+  </div>
+
+  <!-- Table: candidates_staging -->
+  <h2>candidates_staging</h2>
+  <p>Temporary storage for new candidates from Agent 1. Deleted or moved after Agent 2 processes them.</p>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="col-pk">id</td><td><span class="col-type">UUID</span> PK</td><td>Auto-generated</td></tr>
+      <tr><td>candidate_ref</td><td><span class="col-type">VARCHAR(50)</span></td><td>Business key "SR-2024-00123" — unique, indexed</td></tr>
+      <tr><td>status</td><td><span class="col-type">VARCHAR(30)</span></td><td>PENDING | DUPLICATE_REVIEW | AWAITING_HR_REVIEW | COMPLETED | REJECTED</td></tr>
+      <tr><td>full_name</td><td><span class="col-type">VARCHAR(255)</span></td><td></td></tr>
+      <tr><td>email</td><td><span class="col-type">VARCHAR(255)</span></td><td>Indexed for duplicate check</td></tr>
+      <tr><td>phone</td><td><span class="col-type">VARCHAR(50)</span></td><td>Indexed for duplicate check</td></tr>
+      <tr><td>current_title</td><td><span class="col-type">VARCHAR(255)</span></td><td></td></tr>
+      <tr><td>raw_resume_data</td><td><span class="col-type">JSONB</span></td><td>Full Agent 1 output</td></tr>
+      <tr><td>skills_normalized</td><td><span class="col-type">JSONB</span></td><td>Array of normalized skills</td></tr>
+      <tr><td>experience</td><td><span class="col-type">JSONB</span></td><td>Array of experience entries</td></tr>
+      <tr><td>education</td><td><span class="col-type">JSONB</span></td><td>Array of education entries</td></tr>
+      <tr><td>certifications</td><td><span class="col-type">JSONB</span></td><td></td></tr>
+      <tr><td>projects</td><td><span class="col-type">JSONB</span></td><td></td></tr>
+      <tr><td>languages</td><td><span class="col-type">JSONB</span></td><td></td></tr>
+      <tr><td>total_experience_years</td><td><span class="col-type">FLOAT</span></td><td></td></tr>
+      <tr><td>primary_domain</td><td><span class="col-type">VARCHAR(100)</span></td><td>FinTech, Healthcare, E-Commerce, etc.</td></tr>
+      <tr><td>domain_experience</td><td><span class="col-type">JSONB</span></td><td>Domain-wise breakdown</td></tr>
+      <tr><td>parse_confidence</td><td><span class="col-type">FLOAT</span></td><td>AI confidence 0-1</td></tr>
+      <tr><td>duplicate_pre_check</td><td><span class="col-type">JSONB</span></td><td>Quick check result</td></tr>
+      <tr><td class="col-fk">resume_document_id</td><td><span class="col-type">UUID</span> FK</td><td>→ uploaded_documents</td></tr>
+      <tr><td>created_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+      <tr><td>updated_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Table: candidates_main -->
+  <h2>candidates_main</h2>
+  <p>Verified candidates in the talent pool. Normalized child tables for skills, experience, education.</p>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="col-pk">id</td><td><span class="col-type">UUID</span> PK</td><td></td></tr>
+      <tr><td>candidate_ref</td><td><span class="col-type">VARCHAR(50)</span></td><td>Unique business key</td></tr>
+      <tr><td>status</td><td><span class="col-type">VARCHAR(30)</span></td><td>VERIFIED | IDENTITY_VERIFIED | INTERVIEW_READY | TALENT_POOL | INTERVIEW_FAILED</td></tr>
+      <tr><td>full_name</td><td><span class="col-type">VARCHAR(255)</span></td><td></td></tr>
+      <tr><td>email</td><td><span class="col-type">VARCHAR(255)</span></td><td>Unique</td></tr>
+      <tr><td>phone</td><td><span class="col-type">VARCHAR(50)</span></td><td>Unique</td></tr>
+      <tr><td>current_title</td><td><span class="col-type">VARCHAR(255)</span></td><td></td></tr>
+      <tr><td>total_experience_years</td><td><span class="col-type">FLOAT</span></td><td></td></tr>
+      <tr><td>primary_domain</td><td><span class="col-type">VARCHAR(100)</span></td><td></td></tr>
+      <tr><td>location</td><td><span class="col-type">VARCHAR(255)</span></td><td></td></tr>
+      <tr><td>target_role</td><td><span class="col-type">VARCHAR(255)</span></td><td>Self-declared during registration</td></tr>
+      <tr><td>readiness_score</td><td><span class="col-type">FLOAT</span></td><td>Set by Agent 5 (0-100)</td></tr>
+      <tr><td>verification_status</td><td><span class="col-type">VARCHAR(30)</span></td><td>PENDING | VERIFIED | FAILED</td></tr>
+      <tr><td>talent_pool_entry_date</td><td><span class="col-type">TIMESTAMP</span></td><td>When they entered talent pool</td></tr>
+      <tr><td>raw_profile_data</td><td><span class="col-type">JSONB</span></td><td>Complete parsed profile backup</td></tr>
+      <tr><td>created_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+      <tr><td>updated_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Table: candidate_skills -->
+  <h2>candidate_skills</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="col-pk">id</td><td><span class="col-type">UUID</span> PK</td><td></td></tr>
+      <tr><td class="col-fk">candidate_id</td><td><span class="col-type">UUID</span> FK</td><td>→ candidates_main</td></tr>
+      <tr><td class="col-fk">skill_id</td><td><span class="col-type">UUID</span> FK</td><td>→ skill_taxonomy</td></tr>
+      <tr><td>proficiency</td><td><span class="col-type">VARCHAR(20)</span></td><td>BEGINNER | INTERMEDIATE | ADVANCED | EXPERT</td></tr>
+      <tr><td>years_experience</td><td><span class="col-type">FLOAT</span></td><td></td></tr>
+      <tr><td>evidence</td><td><span class="col-type">VARCHAR(500)</span></td><td>"4 years building microservices"</td></tr>
+      <tr><td>is_implied</td><td><span class="col-type">BOOLEAN</span></td><td>True if inferred by AI</td></tr>
+      <tr><td>confidence</td><td><span class="col-type">FLOAT</span></td><td>AI confidence for implied skills</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Table: candidate_experiences -->
+  <h2>candidate_experiences</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="col-pk">id</td><td><span class="col-type">UUID</span> PK</td><td></td></tr>
+      <tr><td class="col-fk">candidate_id</td><td><span class="col-type">UUID</span> FK</td><td>→ candidates_main</td></tr>
+      <tr><td>company</td><td><span class="col-type">VARCHAR(255)</span></td><td></td></tr>
+      <tr><td>title</td><td><span class="col-type">VARCHAR(255)</span></td><td></td></tr>
+      <tr><td>start_date</td><td><span class="col-type">VARCHAR(20)</span></td><td>"2020-01"</td></tr>
+      <tr><td>end_date</td><td><span class="col-type">VARCHAR(20)</span></td><td>Null if current</td></tr>
+      <tr><td>duration_months</td><td><span class="col-type">INT</span></td><td></td></tr>
+      <tr><td>domain</td><td><span class="col-type">VARCHAR(100)</span></td><td>FinTech, Healthcare, etc.</td></tr>
+      <tr><td>is_current</td><td><span class="col-type">BOOLEAN</span></td><td></td></tr>
+      <tr><td>responsibilities</td><td><span class="col-type">JSONB</span></td><td>Array of strings</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Table: candidate_educations -->
+  <h2>candidate_educations</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="col-pk">id</td><td><span class="col-type">UUID</span> PK</td><td></td></tr>
+      <tr><td class="col-fk">candidate_id</td><td><span class="col-type">UUID</span> FK</td><td>→ candidates_main</td></tr>
+      <tr><td>institution</td><td><span class="col-type">VARCHAR(255)</span></td><td></td></tr>
+      <tr><td>degree</td><td><span class="col-type">VARCHAR(100)</span></td><td></td></tr>
+      <tr><td>field</td><td><span class="col-type">VARCHAR(255)</span></td><td></td></tr>
+      <tr><td>graduation_year</td><td><span class="col-type">INT</span></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Table: skill_taxonomy -->
+  <h2>skill_taxonomy</h2>
+  <p>Master skill list. All candidate skills must map to this taxonomy.</p>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="col-pk">id</td><td><span class="col-type">UUID</span> PK</td><td></td></tr>
+      <tr><td>standard_name</td><td><span class="col-type">VARCHAR(255)</span></td><td>"JavaScript" — unique</td></tr>
+      <tr><td>category</td><td><span class="col-type">VARCHAR(100)</span></td><td>Programming Language, Framework, Cloud, etc.</td></tr>
+      <tr><td>aliases</td><td><span class="col-type">JSONB</span></td><td>["JS", "ECMAScript", "Javascript"]</td></tr>
+      <tr><td class="col-fk">parent_skill_id</td><td><span class="col-type">UUID</span> FK</td><td>Self-referential for hierarchy</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Table: verifications -->
+  <h2>verifications</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="col-pk">id</td><td><span class="col-type">UUID</span> PK</td><td></td></tr>
+      <tr><td>verification_ref</td><td><span class="col-type">VARCHAR(50)</span></td><td>"VER-2024-78901"</td></tr>
+      <tr><td class="col-fk">candidate_id</td><td><span class="col-type">UUID</span> FK</td><td>→ candidates_main</td></tr>
+      <tr><td>verification_type</td><td><span class="col-type">VARCHAR(20)</span></td><td>IDENTITY</td></tr>
+      <tr><td>document_type</td><td><span class="col-type">VARCHAR(30)</span></td><td>AADHAAR_CARD | PAN_CARD | PASSPORT</td></tr>
+      <tr><td>status</td><td><span class="col-type">VARCHAR(20)</span></td><td>PENDING | VERIFIED | FAILED | MANUAL_REVIEW</td></tr>
+      <tr><td>confidence_score</td><td><span class="col-type">FLOAT</span></td><td></td></tr>
+      <tr><td>extracted_data</td><td><span class="col-type">JSONB</span></td><td>What AI read from document</td></tr>
+      <tr><td>data_match_results</td><td><span class="col-type">JSONB</span></td><td>Field-by-field comparison</td></tr>
+      <tr><td>document_authenticity</td><td><span class="col-type">JSONB</span></td><td>Fraud indicators, quality score</td></tr>
+      <tr><td>flags</td><td><span class="col-type">JSONB</span></td><td>Any issues found</td></tr>
+      <tr><td class="col-fk">document_id</td><td><span class="col-type">UUID</span> FK</td><td>→ uploaded_documents</td></tr>
+      <tr><td>created_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Table: interviews -->
+  <h2>interviews</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="col-pk">id</td><td><span class="col-type">UUID</span> PK</td><td></td></tr>
+      <tr><td>interview_ref</td><td><span class="col-type">VARCHAR(50)</span></td><td>"INT-2024-00456"</td></tr>
+      <tr><td class="col-fk">candidate_id</td><td><span class="col-type">UUID</span> FK</td><td>→ candidates_main</td></tr>
+      <tr><td>interview_type</td><td><span class="col-type">VARCHAR(20)</span></td><td>L1_SCREENING</td></tr>
+      <tr><td>status</td><td><span class="col-type">VARCHAR(30)</span></td><td>QUESTIONS_GENERATED | SCHEDULED | COMPLETED | SCORED</td></tr>
+      <tr><td>transcript</td><td><span class="col-type">TEXT</span></td><td>Full interview transcript</td></tr>
+      <tr><td>overall_score</td><td><span class="col-type">FLOAT</span></td><td>Set by Agent 5 (0-100)</td></tr>
+      <tr><td>l1_status</td><td><span class="col-type">VARCHAR(20)</span></td><td>PASSED | FAILED</td></tr>
+      <tr><td>recommendation</td><td><span class="col-type">VARCHAR(30)</span></td><td>PROCEED_TO_L2 | REJECT | MANUAL_REVIEW</td></tr>
+      <tr><td>evaluation_data</td><td><span class="col-type">JSONB</span></td><td>Full Agent 5 scoring output</td></tr>
+      <tr><td>interviewer_guide</td><td><span class="col-type">JSONB</span></td><td>Focus areas, red flags to watch</td></tr>
+      <tr><td>created_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+      <tr><td>updated_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Table: interview_questions -->
+  <h2>interview_questions</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="col-pk">id</td><td><span class="col-type">UUID</span> PK</td><td></td></tr>
+      <tr><td class="col-fk">interview_id</td><td><span class="col-type">UUID</span> FK</td><td>→ interviews</td></tr>
+      <tr><td>question_ref</td><td><span class="col-type">VARCHAR(20)</span></td><td>"Q-001"</td></tr>
+      <tr><td>category</td><td><span class="col-type">VARCHAR(30)</span></td><td>EXPERIENCE_VERIFICATION | TECHNICAL | BEHAVIORAL</td></tr>
+      <tr><td>question_text</td><td><span class="col-type">TEXT</span></td><td>The actual question</td></tr>
+      <tr><td>targets_skill</td><td><span class="col-type">VARCHAR(100)</span></td><td>What skill this tests</td></tr>
+      <tr><td>targets_experience</td><td><span class="col-type">VARCHAR(255)</span></td><td>What experience claim this verifies</td></tr>
+      <tr><td>difficulty</td><td><span class="col-type">VARCHAR(20)</span></td><td>MID | SENIOR | LEAD</td></tr>
+      <tr><td>expected_answer_points</td><td><span class="col-type">JSONB</span></td><td>Array of expected answer points</td></tr>
+      <tr><td>follow_up_questions</td><td><span class="col-type">JSONB</span></td><td></td></tr>
+      <tr><td>time_estimate_mins</td><td><span class="col-type">INT</span></td><td></td></tr>
+      <tr><td>answer_quality</td><td><span class="col-type">VARCHAR(20)</span></td><td>CORRECT | PARTIAL | INCORRECT (set by Agent 5)</td></tr>
+      <tr><td>answer_score</td><td><span class="col-type">FLOAT</span></td><td>Set by Agent 5</td></tr>
+      <tr><td>question_hash</td><td><span class="col-type">VARCHAR(64)</span></td><td>For deduplication — indexed</td></tr>
+      <tr><td>created_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Table: uploaded_documents -->
+  <h2>uploaded_documents</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="col-pk">id</td><td><span class="col-type">UUID</span> PK</td><td></td></tr>
+      <tr><td>filename</td><td><span class="col-type">VARCHAR(255)</span></td><td>Stored filename</td></tr>
+      <tr><td>original_filename</td><td><span class="col-type">VARCHAR(255)</span></td><td>What user uploaded</td></tr>
+      <tr><td>content_type</td><td><span class="col-type">VARCHAR(100)</span></td><td>"application/pdf", "image/png"</td></tr>
+      <tr><td>file_size_bytes</td><td><span class="col-type">INT</span></td><td></td></tr>
+      <tr><td>storage_path</td><td><span class="col-type">VARCHAR(500)</span></td><td>Path in file storage</td></tr>
+      <tr><td>document_category</td><td><span class="col-type">VARCHAR(30)</span></td><td>RESUME | ID_DOCUMENT</td></tr>
+      <tr><td>uploaded_by_ref</td><td><span class="col-type">VARCHAR(50)</span></td><td>candidate_ref</td></tr>
+      <tr><td>created_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Table: background_tasks -->
+  <h2>background_tasks</h2>
+  <table class="schema-table">
+    <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="col-pk">id</td><td><span class="col-type">UUID</span> PK</td><td></td></tr>
+      <tr><td>task_type</td><td><span class="col-type">VARCHAR(50)</span></td><td>AGENT1_RESUME_PARSE | AGENT2_DUPLICATE | AGENT3_VERIFY | AGENT4_QUESTIONS | AGENT5_SCORE</td></tr>
+      <tr><td>reference_id</td><td><span class="col-type">VARCHAR(50)</span></td><td>candidate_ref or interview_ref</td></tr>
+      <tr><td>status</td><td><span class="col-type">VARCHAR(20)</span></td><td>QUEUED | PROCESSING | COMPLETED | FAILED</td></tr>
+      <tr><td>result</td><td><span class="col-type">JSONB</span></td><td>Agent output when completed</td></tr>
+      <tr><td>error_message</td><td><span class="col-type">TEXT</span></td><td>If failed</td></tr>
+      <tr><td>created_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+      <tr><td>started_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+      <tr><td>completed_at</td><td><span class="col-type">TIMESTAMP</span></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 7: API ENDPOINTS -->
+<div class="content page-break">
+  <div class="section-header">
+    <span class="section-number">7</span>
+    <h1>API Endpoints</h1>
+    <p class="section-desc">All endpoints for the candidate pipeline.</p>
+  </div>
+
+  <h2>Candidate Registration</h2>
+  <table>
+    <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>POST</strong></td><td>/api/v1/candidates/register</td><td>Save name, email, phone</td></tr>
+      <tr><td>GET</td><td>/api/v1/candidates/staging</td><td>List staging candidates</td></tr>
+      <tr><td>GET</td><td>/api/v1/candidates/staging/{ref}</td><td>Get staging candidate detail</td></tr>
+      <tr><td>GET</td><td>/api/v1/candidates</td><td>List verified candidates</td></tr>
+      <tr><td>GET</td><td>/api/v1/candidates/{ref}</td><td>Get full candidate profile</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Agent Endpoints</h2>
+  <p>All agent endpoints return a <strong>task_id</strong> immediately (async). Frontend polls /tasks/{id} for result.</p>
+  <table>
+    <thead><tr><th>Method</th><th>Path</th><th>Agent</th><th>Input</th></tr></thead>
+    <tbody>
+      <tr><td><strong>POST</strong></td><td>/api/v1/agent1/parse-resume</td><td>Resume Parser</td><td>multipart file + candidate_ref</td></tr>
+      <tr><td><strong>POST</strong></td><td>/api/v1/agent2/check-duplicate</td><td>Duplicate Check</td><td>candidate_ref + threshold</td></tr>
+      <tr><td><strong>POST</strong></td><td>/api/v1/agent2/resolve</td><td>HR Resolve</td><td>candidate_ref + action (MERGE/REJECT/KEEP)</td></tr>
+      <tr><td><strong>POST</strong></td><td>/api/v1/agent3/verify-identity</td><td>ID Verification</td><td>multipart image + candidate_ref + document_type</td></tr>
+      <tr><td><strong>POST</strong></td><td>/api/v1/agent4/generate-questions</td><td>Question Gen</td><td>candidate_ref + interview_type + config</td></tr>
+      <tr><td><strong>POST</strong></td><td>/api/v1/agent5/score-interview</td><td>Interview Score</td><td>interview_ref + transcript</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Task Polling</h2>
+  <table>
+    <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>GET</td><td>/api/v1/tasks/{task_id}</td><td>Check task status + result when completed</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Skill Taxonomy</h2>
+  <table>
+    <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>GET</td><td>/api/v1/skills/taxonomy</td><td>List all skills (with search)</td></tr>
+      <tr><td><strong>POST</strong></td><td>/api/v1/skills/taxonomy</td><td>Add skill to taxonomy</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 8: STATUS FLOW -->
+<div class="content">
+  <div class="section-header">
+    <span class="section-number">8</span>
+    <h1>Candidate Status Flow</h1>
+    <p class="section-desc">How candidate status changes through the pipeline.</p>
+  </div>
+
+  <table>
+    <thead><tr><th>Stage</th><th>Table</th><th>Status</th><th>Triggered By</th></tr></thead>
+    <tbody>
+      <tr><td>Resume uploaded</td><td>candidates_staging</td><td><span class="status-badge pending">PENDING</span></td><td>Agent 1</td></tr>
+      <tr><td>Possible duplicate</td><td>candidates_staging</td><td><span class="status-badge pending">DUPLICATE_REVIEW</span></td><td>Agent 2</td></tr>
+      <tr><td>Duplicate confirmed</td><td>candidates_staging</td><td><span class="status-badge failed">REJECTED</span></td><td>Agent 2 / HR</td></tr>
+      <tr><td>Unique confirmed</td><td>candidates_main</td><td><span class="status-badge verified">VERIFIED</span></td><td>Agent 2</td></tr>
+      <tr><td>ID verified</td><td>candidates_main</td><td><span class="status-badge verified">IDENTITY_VERIFIED</span></td><td>Agent 3</td></tr>
+      <tr><td>ID failed</td><td>candidates_main</td><td><span class="status-badge failed">VERIFICATION_FAILED</span></td><td>Agent 3</td></tr>
+      <tr><td>Questions generated</td><td>candidates_main</td><td><span class="status-badge verified">INTERVIEW_READY</span></td><td>Agent 4</td></tr>
+      <tr><td>Interview passed</td><td>candidates_main</td><td><span class="status-badge pool">TALENT_POOL</span></td><td>Agent 5</td></tr>
+      <tr><td>Interview failed</td><td>candidates_main</td><td><span class="status-badge failed">INTERVIEW_FAILED</span></td><td>Agent 5</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+</body>
+</html>

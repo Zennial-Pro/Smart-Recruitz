@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZennialPro - Hiring Manager Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .logo-text h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info .name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info .role {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 25px;
+        }
+
+        .page-title {
+            margin-bottom: 25px;
+        }
+
+        .page-title h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .page-title p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 25px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        /* Search Panel */
+        .search-section {
+            margin-bottom: 20px;
+        }
+
+        .search-section h4 {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-area:hover {
+            border-color: #2e7d32;
+            background: #e8f5e9;
+        }
+
+        .file-upload-area.uploaded {
+            border-color: #2e7d32;
+            border-style: solid;
+            background: #e8f5e9;
+        }
+
+        .file-upload-area .icon {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-area p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .skill-input-area {
+            margin-top: 15px;
+        }
+
+        .skill-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .skill-input:focus {
+            border-color: #2e7d32;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .skill-tag {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .skill-tag .remove {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .skill-tag .remove:hover {
+            opacity: 1;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        /* Results Panel */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .results-count {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .results-count strong {
+            color: #2e7d32;
+        }
+
+        .sort-select {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .candidate-card {
+            background: #fafafa;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .candidate-card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            border-color: #2e7d32;
+        }
+
+        .candidate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .candidate-info h3 {
+            font-size: 17px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .candidate-info p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .match-badge {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .match-badge.high {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+        }
+
+        .match-badge.medium {
+            background: linear-gradient(135deg, #f57c00 0%, #ff9800 100%);
+        }
+
+        .match-badge.low {
+            background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+        }
+
+        .candidate-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .detail-item {
+            text-align: center;
+        }
+
+        .detail-item .label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-item .value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 4px;
+        }
+
+        .candidate-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .candidate-skills .skill {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
+        .candidate-skills .skill.matched {
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .candidate-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .action-btn.primary {
+            background: #2e7d32;
+            color: white;
+            border: none;
+        }
+
+        .action-btn.primary:hover {
+            background: #1b5e20;
+        }
+
+        .action-btn.secondary {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .action-btn.secondary:hover {
+            background: #f5f5f5;
+        }
+
+        .readiness-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .readiness-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2e7d32, #43a047);
+            border-radius: 3px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-badge.verified {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-badge.pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state .icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h3 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e0e0e0;
+            border-top-color: #2e7d32;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">Z</div>
+            <div class="logo-text">
+                <h1>ZennialPro</h1>
+                <p>Hiring Manager Portal</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <div class="name">Ranjith Rayapati</div>
+            </div>
+            <div class="user-avatar">👤</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="page-title">
+            <h2>POC 6: Job Matching & Candidate Search</h2>
+            <p>Upload JD or enter skills to find matching candidates from the talent pool</p>
+        </div>
+
+        <div class="content-grid">
+            <!-- Search Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    🔍 Search Criteria
+                </div>
+                <div class="panel-body">
+                    <div class="search-section">
+                        <h4>Upload Job Description</h4>
+                        <div class="file-upload-area" id="jdUpload">
+                            <div class="icon">📄</div>
+                            <p>Click to upload JD</p>
+                            <p style="font-size: 12px; color: #999; margin-top: 5px;">PDF, DOC, DOCX</p>
+                        </div>
+                    </div>
+
+                    <div class="divider"><span>OR</span></div>
+
+                    <div class="search-section">
+                        <h4>Enter Required Skills</h4>
+                        <div class="skill-input-area">
+                            <input type="text" class="skill-input" id="skillInput" placeholder="Type skill and press Enter...">
+                            <div class="skill-tags" id="skillTags">
+                                <!-- Skills will be added here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="search-btn" id="searchBtn">🔍 Search Candidates</button>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    👥 Matching Candidates
+                </div>
+                <div class="panel-body" id="resultsArea">
+                    <div class="empty-state" id="emptyState">
+                        <div class="icon">🔍</div>
+                        <h3>Search for Candidates</h3>
+                        <p>Upload a JD or enter skills to find matching candidates</p>
+                    </div>
+
+                    <div id="loadingState" style="display: none;">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Searching candidates...</p>
+                        </div>
+                    </div>
+
+                    <div id="resultsContent" style="display: none;">
+                        <!-- Results will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample candidate data
+        const candidatePool = [
+            {
+                id: 1,
+                name: "John Smith",
+                email: "john.smith@email.com",
+                currentRole: "Senior Developer @ ABC Tech",
+                experience: "8 Years",
+                location: "San Francisco, CA",
+                readinessScore: 85,
+                skills: ["Java", "Spring Boot", "Microservices", "AWS", "PostgreSQL", "Docker", "Kubernetes"],
+                verified: true,
+                interviewDate: "2024-01-15"
+            },
+            {
+                id: 2,
+                name: "Emily Chen",
+                email: "emily.chen@email.com",
+                currentRole: "Software Engineer @ Google",
+                experience: "6 Years",
+                location: "Seattle, WA",
+                readinessScore: 92,
+                skills: ["Java", "Python", "AWS", "Machine Learning", "Spring Boot", "React"],
+                verified: true,
+                interviewDate: "2024-01-14"
+            },
+            {
+                id: 3,
+                name: "Michael Brown",
+                email: "michael.b@email.com",
+                currentRole: "Backend Developer @ Startup Inc",
+                experience: "4 Years",
+                location: "Austin, TX",
+                readinessScore: 78,
+                skills: ["Java", "Node.js", "MongoDB", "Docker", "REST API"],
+                verified: true,
+                interviewDate: "2024-01-13"
+            },
+            {
+                id: 4,
+                name: "Sarah Williams",
+                email: "sarah.w@email.com",
+                currentRole: "Full Stack Developer @ Microsoft",
+                experience: "7 Years",
+                location: "Remote",
+                readinessScore: 88,
+                skills: ["Java", "Spring Boot", "React", "AWS", "Kubernetes", "CI/CD"],
+                verified: true,
+                interviewDate: "2024-01-12"
+            },
+            {
+                id: 5,
+                name: "David Lee",
+                email: "david.lee@email.com",
+                currentRole: "Tech Lead @ Amazon",
+                experience: "10 Years",
+                location: "New York, NY",
+                readinessScore: 95,
+                skills: ["Java", "Spring Boot", "Microservices", "AWS", "System Design", "Leadership"],
+                verified: true,
+                interviewDate: "2024-01-11"
+            }
+        ];
+
+        let selectedSkills = [];
+
+        // JD Upload handler
+        document.getElementById('jdUpload').addEventListener('click', function() {
+            this.classList.add('uploaded');
+            this.innerHTML = `
+                <div class="icon">✅</div>
+                <p><strong>Senior_Java_Developer_JD.pdf</strong></p>
+                <p style="font-size: 12px; color: #2e7d32; margin-top: 5px;">Uploaded successfully</p>
+            `;
+
+            // Auto-extract skills from JD
+            selectedSkills = ["Java", "Spring Boot", "Microservices", "AWS"];
+            renderSkillTags();
+        });
+
+        // Skill input handler
+        document.getElementById('skillInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                const skill = this.value.trim();
+                if (!selectedSkills.includes(skill)) {
+                    selectedSkills.push(skill);
+                    renderSkillTags();
+                }
+                this.value = '';
+            }
+        });
+
+        function renderSkillTags() {
+            const container = document.getElementById('skillTags');
+            container.innerHTML = selectedSkills.map(skill => `
+                <span class="skill-tag">
+                    ${skill}
+                    <span class="remove" onclick="removeSkill('${skill}')">✕</span>
+                </span>
+            `).join('');
+        }
+
+        function removeSkill(skill) {
+            selectedSkills = selectedSkills.filter(s => s !== skill);
+            renderSkillTags();
+        }
+
+        // Search handler
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            if (selectedSkills.length === 0) {
+                alert('Please upload a JD or enter at least one skill');
+                return;
+            }
+
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('resultsContent').style.display = 'none';
+
+            setTimeout(() => {
+                document.getElementById('loadingState').style.display = 'none';
+                showResults();
+            }, 1500);
+        });
+
+        function calculateMatch(candidate) {
+            const matchedSkills = candidate.skills.filter(s =>
+                selectedSkills.some(ss => s.toLowerCase().includes(ss.toLowerCase()) || ss.toLowerCase().includes(s.toLowerCase()))
+            );
+            return Math.round((matchedSkills.length / selectedSkills.length) * 100);
+        }
+
+        function showResults() {
+            const results = candidatePool.map(c => ({
+                ...c,
+                matchScore: calculateMatch(c)
+            })).sort((a, b) => b.matchScore - a.matchScore);
+
+            const container = document.getElementById('resultsContent');
+            container.innerHTML = `
+                <div class="results-header">
+                    <div class="results-count">Found <strong>${results.length}</strong> candidates</div>
+                    <select class="sort-select">
+                        <option>Sort by: Match Score</option>
+                        <option>Sort by: Readiness Score</option>
+                        <option>Sort by: Experience</option>
+                    </select>
+                </div>
+                ${results.map(candidate => renderCandidateCard(candidate)).join('')}
+            `;
+            container.style.display = 'block';
+        }
+
+        function renderCandidateCard(candidate) {
+            const matchClass = candidate.matchScore >= 80 ? 'high' : candidate.matchScore >= 60 ? 'medium' : 'low';
+            const matchedSkills = candidate.skills.filter(s =>
+                selectedSkills.some(ss => s.toLowerCase().includes(ss.toLowerCase()) || ss.toLowerCase().includes(s.toLowerCase()))
+            );
+
+            return `
+                <div class="candidate-card">
+                    <div class="candidate-header">
+                        <div class="candidate-info">
+                            <h3>${candidate.name}</h3>
+                            <p>${candidate.currentRole}</p>
+                        </div>
+                        <div class="match-badge ${matchClass}">${candidate.matchScore}% Match</div>
+                    </div>
+
+                    <div class="candidate-details">
+                        <div class="detail-item">
+                            <div class="label">Experience</div>
+                            <div class="value">${candidate.experience}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Location</div>
+                            <div class="value">${candidate.location}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="label">Readiness</div>
+                            <div class="value">${candidate.readinessScore}/100</div>
+                            <div class="readiness-bar">
+                                <div class="readiness-fill" style="width: ${candidate.readinessScore}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="candidate-skills">
+                        ${candidate.skills.map(skill => `
+                            <span class="skill ${matchedSkills.includes(skill) ? 'matched' : ''}">${skill}${matchedSkills.includes(skill) ? ' ✓' : ''}</span>
+                        `).join('')}
+                    </div>
+
+                    <div style="margin-top: 12px;">
+                        <span class="status-badge verified">✓ Verified</span>
+                        <span style="font-size: 12px; color: #999; margin-left: 10px;">L1 Interview: ${candidate.interviewDate}</span>
+                    </div>
+
+                    <div class="candidate-actions">
+                        <button class="action-btn secondary" onclick="viewProfile(${candidate.id})">View Profile</button>
+                        <button class="action-btn secondary" onclick="viewInterview(${candidate.id})">Watch L1 Interview</button>
+                        <button class="action-btn primary" onclick="scheduleL2(${candidate.id})">Schedule L2</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function viewProfile(id) {
+            alert('Opening candidate profile...');
+        }
+
+        function viewInterview(id) {
+            alert('Opening L1 interview recording...');
+        }
+
+        function scheduleL2(id) {
+            const candidate = candidatePool.find(c => c.id === id);
+            alert(`Scheduling L2 interview with ${candidate.name}...`);
+        }
+    </script>
+</body>
+</html>

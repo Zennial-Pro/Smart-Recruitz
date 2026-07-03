@@ -1,0 +1,76 @@
+#	Date	Day	Work Performed
+1	02 Mar 2026	Monday	Project kick-off; went through the requirements and mapped the candidate verification flow end to end
+2	04 Mar 2026	Wednesday	Finalised the architecture: async FastAPI backend, Next.js frontend, PostgreSQL, with the AI work split into separate single-purpose agents
+3	05 Mar 2026	Thursday	Designed the Postgres schema: a staging table for raw parsed data and a main table for verified candidates, plus interviews, verifications and a skill taxonomy
+4	06 Mar 2026	Friday	Set up the repo, the Python virtualenv, Alembic and the local Postgres, and the base service structure
+5	09 Mar 2026	Monday	Built the FastAPI application factory, the pydantic settings layer and the async SQLAlchemy engine and session
+6	10 Mar 2026	Tuesday	Added the SQLAlchemy models for candidates_staging and candidates_main with UUID primary keys and JSONB columns for the parsed profile and analysis
+7	11 Mar 2026	Wednesday	Added the interview, interview_question and verification models with their foreign keys back to the candidate
+8	12 Mar 2026	Thursday	Added the skill_taxonomy, uploaded_document and background_task models
+9	13 Mar 2026	Friday	Set up Alembic and wrote the initial migration, including the pg_trgm extension for fuzzy name search
+10	16 Mar 2026	Monday	Built the candidate repository: create and fetch staging, and the staging to main promotion logic
+11	17 Mar 2026	Tuesday	Built the candidate registration endpoint and service that creates the staging row and generates the candidate ref
+12	18 Mar 2026	Wednesday	Set up the async background-task handling with a tasks table that the frontend polls for status
+13	20 Mar 2026	Friday	Wired up the OpenAI client wrapper and the base agent structure with the prompt files
+14	23 Mar 2026	Monday	Scaffolded the Next.js app-router frontend and the routing
+15	24 Mar 2026	Tuesday	Added the shared shadcn UI components and the ky-based API client
+16	25 Mar 2026	Wednesday	Built the onboarding chat shell and the Zustand stores for the chat and onboarding state
+17	26 Mar 2026	Thursday	Worked on the Agent 1 resume-parsing prompt to extract structured fields
+18	30 Mar 2026	Monday	Got Agent 1 parsing resumes into a structured profile with skills, experience and education
+19	31 Mar 2026	Tuesday	Added vision parsing so scanned and image PDFs go through the vision model instead of plain text extraction
+20	01 Apr 2026	Wednesday	Normalised the parsed skills against the skill taxonomy so search and matching stay consistent
+21	02 Apr 2026	Thursday	Added the resume scoring with sub-scores and the analytics it pulls out
+22	06 Apr 2026	Monday	Wrote the Agent 1 background handler that saves the parsed profile and analysis onto the staging row
+23	07 Apr 2026	Tuesday	Built the resume-review card so the candidate confirms the parsed profile before continuing
+24	08 Apr 2026	Wednesday	Started Agent 2 (duplicate detection) using a pg_trgm fuzzy match on name plus email and phone to shortlist candidates
+25	09 Apr 2026	Thursday	Finished Agent 2 with the LLM comparison over the shortlist, returning unique, duplicate or uncertain
+26	10 Apr 2026	Friday	Added the promotion from staging into the main talent pool once a candidate clears the duplicate check
+27	13 Apr 2026	Monday	Started Agent 3 (ID verification), sending the document image through the vision model
+28	14 Apr 2026	Tuesday	Handled Aadhaar, PAN and Passport with the mandatory-document ordering
+29	15 Apr 2026	Wednesday	Added the name and DOB match against the claimed details and the document authenticity confidence
+30	16 Apr 2026	Thursday	Built the verification records and the per-document status flow
+31	17 Apr 2026	Friday	Built the ID upload widget with the step-by-step mandatory-document prompts
+32	20 Apr 2026	Monday	Worked on the Agent 4 prompt to generate interview questions from the candidate profile
+33	21 Apr 2026	Tuesday	Got Agent 4 generating questions targeted at the candidate's actual skills with expected-answer points
+34	22 Apr 2026	Wednesday	Worked on the Agent 5 scoring prompt and the evaluation rubric
+35	23 Apr 2026	Thursday	Finished Agent 5 scoring the transcript into an overall score, the L1 pass/fail and a recommendation
+36	24 Apr 2026	Friday	Wired the interview question and answer loop into the chatbot
+37	27 Apr 2026	Monday	Built the interview recording and transcription UI with the video widget
+38	28 Apr 2026	Tuesday	Added the scoring task polling and cached the result on the candidate so it loads instantly
+39	29 Apr 2026	Wednesday	Showed the readiness score, L1 status and recommendation on the result screen
+40	30 Apr 2026	Thursday	Added the re-interview controls so an admin can grant another attempt
+41	04 May 2026	Monday	Reworked the onboarding chatbot into a proper state machine, one step at a time
+42	05 May 2026	Tuesday	Made the chatbot sessions resumable by persisting the onboarding state to localStorage
+43	06 May 2026	Wednesday	Added the email lookup and restore so returning candidates pick up exactly where they left off
+44	07 May 2026	Thursday	Cleaned up the typed chat message rendering and the flow handling
+45	08 May 2026	Friday	Got the new requirement set from the client, went through it and planned the changes
+46	11 May 2026	Monday	Added the candidate fields they asked for (current CTC, expected CTC, notice period, working status) with the migration
+47	12 May 2026	Tuesday	Added current and preferred location, and made Aadhaar and PAN mandatory in the ID verification step
+48	13 May 2026	Wednesday	Added the resume score and the general analytics from the resume (tenure, employment gaps, company-type mix)
+49	14 May 2026	Thursday	Captured the Git and LinkedIn URLs and added the LinkedIn vs resume cross check via the Coresignal lookup
+50	15 May 2026	Friday	Added the service vs product company classification, the value-addition check, certifications and the resume pros and cons
+51	18 May 2026	Monday	Stored the interview video link and the full interview context, and made sure everything persists to the DB
+52	19 May 2026	Tuesday	Added LMS course recommendations for profiles that come from the LMS, and set up Zoho for project tracking
+53	20 May 2026	Wednesday	Built the hiring manager dashboard with the pool stats, domain breakdown and recent candidates
+54	21 May 2026	Thursday	Built the JD search with the weighted mandatory/preferred skill-match ranking and the candidate detail page
+55	22 May 2026	Friday	Wrapped up the candidate data-model changes and ran the migrations
+56	25 May 2026	Monday	Interview as a Service: Set up the HeyGen LiveAvatar account and got the streaming API key
+57	26 May 2026	Tuesday	Interview as a Service: Did a basic LiveAvatar demo, got the avatar WebRTC stream rendering in the browser
+58	27 May 2026	Wednesday	Tidied up the hiring manager search, added pagination and the filters
+59	28 May 2026	Thursday	Interview as a Service: Got the avatar to speak by sending text through the LiveAvatar session repeat call
+60	29 May 2026	Friday	Interview as a Service: Fixed the avatar going silent; it was calling repeat before the session reached the connected state, so I fixed the event timing
+61	01 Jun 2026	Monday	Interview as a Service: Hooked up Deepgram nova-2 streaming speech to text over a websocket for the candidate audio
+62	02 Jun 2026	Tuesday	Interview as a Service: Got the realtime transcript working with the avatar, handling the interim and final results
+63	03 Jun 2026	Wednesday	Interview as a Service: Wired the basic question and follow-up loop, sending the transcript to the model and the reply back to the avatar
+64	04 Jun 2026	Thursday	Got LMS access from the team and went through how SmartRecruitz would plug into it
+65	05 Jun 2026	Friday	Started the LMS integration: built the recruitment module and the candidate to LMS-user mapping table
+66	08 Jun 2026	Monday	Wired the approval flow and the short-lived token handoff between the LMS and SmartRecruitz
+67	09 Jun 2026	Tuesday	Started merging the SmartRecruitz database into the LMS Postgres database
+68	10 Jun 2026	Wednesday	Moved the tables into the LMS application schema with the lms_recruit_ prefix and matched their naming conventions
+69	11 Jun 2026	Thursday	Pointed the FastAPI backend at the shared LMS database, updated the models, FKs and the Alembic version schema, and verified it still worked
+70	12 Jun 2026	Friday	Wired the location filter into the hiring manager search, matching current or preferred location
+71	15 Jun 2026	Monday	Started the standalone auth: argon2 password hashing and HS256 JWTs, and set up the Google sign in
+72	16 Jun 2026	Tuesday	Finished the auth: the hiring manager login, the get_current_user dependency and the route guards
+73	17 Jun 2026	Wednesday	Interview as a Service: Tested the LiveAvatar interview demo end to end
+74	18 Jun 2026	Thursday	Stabilised both apps, sorted the env config and the run scripts, and wrote up the docs
+75	19 Jun 2026	Friday	Added the Google sign in for both candidates and hiring managers, with the intent-based OAuth callback assigning the role

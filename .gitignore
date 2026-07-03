@@ -1,0 +1,31 @@
+# =============================================================================
+# Root .gitignore — zennial-pro monorepo
+# =============================================================================
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment files — NEVER commit these
+.env
+.env.local
+.env.*.local
+
+# Internal design/PRD documents — keep off git
+Td - documents/
+
+# Logs
+*.log
+logs/

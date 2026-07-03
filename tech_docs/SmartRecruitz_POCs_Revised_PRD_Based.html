@@ -1,0 +1,2490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRecruitz AI Agents - 6 POCs | PRD Section 6.2 Based</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: #333;
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            background: #fff;
+        }
+        h1 {
+            color: #1a73e8;
+            font-size: 26px;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #1a73e8;
+            padding-bottom: 15px;
+        }
+        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
+        h2 {
+            color: #fff;
+            font-size: 18px;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            padding: 12px 18px;
+            background: linear-gradient(135deg, #1a73e8, #4285f4);
+            border-radius: 8px;
+        }
+        h3 { color: #2c3e50; font-size: 15px; margin-top: 18px; margin-bottom: 10px; }
+        h4 { color: #1a73e8; font-size: 13px; margin-top: 12px; margin-bottom: 8px; text-transform: uppercase; }
+
+        .answer-box {
+            background: #e8f5e9;
+            border: 2px solid #43a047;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .answer-box h4 { color: #2e7d32; margin-top: 0; }
+
+        .question-box {
+            background: #fff3e0;
+            border-left: 5px solid #ff9800;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .question-box h4 { color: #e65100; margin-top: 0; }
+
+        .poc-section {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #fafafa;
+        }
+        .poc-section h2 {
+            color: #fff;
+            font-size: 18px;
+            margin: -20px -20px 15px -20px;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #1a73e8, #4285f4);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .objective { background: #e3f2fd; border-left: 4px solid #1976d2; padding: 12px 15px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+        .problem { background: #ffebee; border-left: 4px solid #e53935; padding: 12px 15px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+        .outcome { background: #e8f5e9; border-left: 4px solid #43a047; padding: 12px 15px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+        .approach { background: #fff8e1; border-left: 4px solid #ffc107; padding: 12px 15px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+        .justification { background: #f3e5f5; border-left: 4px solid #9c27b0; padding: 12px 15px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+        .validation { background: #fff3e0; border-left: 4px solid #ff5722; padding: 12px 15px; margin: 10px 0; border-radius: 0 6px 6px 0; }
+
+        .data-source {
+            background: #e0f2f1;
+            border: 2px solid #00897b;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .data-source h4 { color: #00695c; margin-top: 0; }
+
+        .io-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 15px 0;
+            align-items: start;
+        }
+        .input-box {
+            background: #f5f5f5;
+            border: 1px solid #ccc;
+            border-left: 4px solid #1976d2;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        .input-box h4 { color: #1976d2; margin-top: 0; font-size: 12px; }
+        .output-box {
+            background: #f5f5f5;
+            border: 1px solid #ccc;
+            border-left: 4px solid #388e3c;
+            border-radius: 4px;
+            padding: 15px;
+        }
+        .output-box h4 { color: #388e3c; margin-top: 0; font-size: 12px; }
+
+        pre {
+            background-color: #263238;
+            color: #aed581;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 8px 0;
+            font-size: 10px;
+            font-family: 'Consolas', monospace;
+            white-space: pre-wrap;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th { background-color: #1a73e8; color: white; font-weight: 600; }
+        tr:nth-child(even) { background-color: #f5f5f5; }
+
+        ul, ol { margin: 8px 0 8px 20px; }
+        li { margin: 4px 0; font-size: 13px; }
+
+        .highlight { background: #ffeb3b; padding: 2px 5px; }
+        .important { color: #d32f2f; font-weight: bold; }
+        .check { color: #43a047; font-weight: bold; }
+
+        /* AI Technology Badge */
+        .ai-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #6b46c1, #9f7aea);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            margin: 5px 5px 5px 0;
+        }
+
+        /* Web Scraping Badge */
+        .scraping-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #2d3748, #4a5568);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 600;
+            margin: 5px 5px 5px 0;
+        }
+
+        /* Technology Stack Box */
+        .tech-stack {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin: 12px 0;
+        }
+        .tech-stack h4 { color: #495057; margin-top: 0; margin-bottom: 8px; }
+
+        .flowchart {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Consolas', monospace;
+            font-size: 10px;
+            overflow-x: auto;
+        }
+        .flowchart pre {
+            margin: 0;
+            background: transparent;
+            color: #333;
+            font-size: 10px;
+            line-height: 1.3;
+        }
+
+        .page-break { page-break-before: always; }
+
+        /* A4 Page Sizing for Print */
+        @page {
+            size: A4 portrait;
+            margin: 10mm 8mm 10mm 8mm;
+        }
+
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                box-sizing: border-box !important;
+            }
+
+            html, body {
+                width: 100%;
+                padding: 0;
+                margin: 0;
+                background: #fff !important;
+                font-size: 9px;
+                line-height: 1.3;
+            }
+
+            body {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            h1 {
+                font-size: 18px;
+                margin-bottom: 4px;
+                padding-bottom: 6px;
+                page-break-after: avoid;
+            }
+
+            h2 {
+                background: #1a73e8 !important;
+                color: #fff !important;
+                font-size: 12px;
+                padding: 6px 10px;
+                margin-top: 0;
+                page-break-after: avoid;
+            }
+
+            h3 { font-size: 10px; margin-top: 5px; margin-bottom: 3px; page-break-after: avoid; }
+            h4 { font-size: 9px; margin-top: 4px; margin-bottom: 2px; page-break-after: avoid; }
+
+            .poc-section {
+                background: #fff !important;
+                border: 1px solid #ccc !important;
+                page-break-inside: auto;
+                padding: 8px;
+                margin: 0 0 6px 0;
+            }
+
+            .poc-section h2 {
+                background: #1a73e8 !important;
+                color: #fff !important;
+                margin: -8px -8px 6px -8px;
+                padding: 6px 10px;
+                font-size: 11px;
+                page-break-after: avoid;
+            }
+
+            .objective, .problem, .outcome, .approach, .justification, .validation {
+                padding: 5px 6px;
+                margin: 3px 0;
+            }
+
+            .objective { background: #e3f2fd !important; border-left: 2px solid #1976d2 !important; }
+            .problem { background: #ffebee !important; border-left: 2px solid #e53935 !important; }
+            .outcome { background: #e8f5e9 !important; border-left: 2px solid #43a047 !important; }
+            .approach { background: #fff8e1 !important; border-left: 2px solid #ffc107 !important; }
+            .justification { background: #f3e5f5 !important; border-left: 2px solid #9c27b0 !important; }
+            .validation { background: #fff3e0 !important; border-left: 2px solid #ff5722 !important; }
+
+            .data-source {
+                background: #e0f2f1 !important;
+                border: 1px solid #00897b !important;
+                padding: 6px;
+                margin: 4px 0;
+            }
+
+            .io-container {
+                display: table;
+                width: 100%;
+                table-layout: fixed;
+                margin: 4px 0;
+            }
+
+            .input-box, .output-box {
+                display: table-cell;
+                width: 49%;
+                padding: 6px;
+                vertical-align: top;
+            }
+
+            .input-box {
+                background: #f5f5f5 !important;
+                border: 1px solid #ddd !important;
+                border-left: 3px solid #1976d2 !important;
+            }
+            .input-box h4 {
+                color: #1976d2 !important;
+                font-size: 10px !important;
+                margin-bottom: 4px !important;
+                margin-top: 0 !important;
+            }
+            .output-box {
+                background: #f5f5f5 !important;
+                border: 1px solid #ddd !important;
+                border-left: 3px solid #388e3c !important;
+            }
+            .output-box h4 {
+                color: #388e3c !important;
+                font-size: 9px !important;
+                margin-bottom: 3px !important;
+                margin-top: 0 !important;
+            }
+
+            pre {
+                background-color: #2d2d2d !important;
+                color: #b5cea8 !important;
+                font-size: 7px;
+                padding: 5px;
+                margin: 2px 0;
+                line-height: 1.15;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+
+            .flowchart {
+                background: #f8f8f8 !important;
+                border: 1px solid #ddd !important;
+                padding: 5px;
+                margin: 4px 0;
+            }
+            .flowchart pre {
+                background: transparent !important;
+                color: #333 !important;
+                font-size: 7px;
+                line-height: 1.15;
+                padding: 3px;
+            }
+
+            table {
+                border-collapse: collapse;
+                font-size: 8px;
+                margin: 4px 0;
+                width: 100%;
+            }
+            th, td {
+                padding: 3px 5px;
+                border: 1px solid #ccc;
+            }
+            th {
+                background-color: #1a73e8 !important;
+                color: white !important;
+                font-size: 8px;
+            }
+            tr:nth-child(even) { background-color: #f9f9f9 !important; }
+
+            ul, ol { margin: 3px 0 3px 12px; }
+            li { margin: 1px 0; font-size: 8px; }
+
+            .no-print { display: none !important; }
+
+            /* AI Technology Badge for Print */
+            .ai-badge {
+                background: linear-gradient(135deg, #6b46c1, #9f7aea) !important;
+                color: white !important;
+                font-size: 9px !important;
+                padding: 3px 8px !important;
+            }
+
+            /* Web Scraping Badge for Print */
+            .scraping-badge {
+                background: linear-gradient(135deg, #2d3748, #4a5568) !important;
+                color: white !important;
+                font-size: 9px !important;
+                padding: 3px 8px !important;
+            }
+
+            /* Tech Stack Box for Print */
+            .tech-stack {
+                background: #f8f9fa !important;
+                border: 2px solid #dee2e6 !important;
+                padding: 10px 12px;
+                margin: 10px 0;
+                page-break-inside: avoid;
+            }
+            .tech-stack h4 {
+                font-size: 11px;
+                margin-bottom: 6px;
+            }
+            .tech-stack p {
+                font-size: 10px !important;
+            }
+            .tech-stack table {
+                font-size: 9px !important;
+            }
+
+            /* GPT Badge for Print */
+            .ai-badge[style*="10a37f"] {
+                background: linear-gradient(135deg, #10a37f, #1a7f5a) !important;
+            }
+
+            /* Pending/TBD rows for Print */
+            tr[style*="fffbeb"] {
+                background-color: #fffbeb !important;
+            }
+
+            /* Tighter spacing */
+            .subtitle {
+                font-size: 9px;
+                margin-bottom: 8px;
+            }
+
+            /* Consistent spacing for all paragraphs */
+            p {
+                margin: 2px 0;
+                font-size: 8px;
+                line-height: 1.3;
+            }
+
+            /* Headers */
+            h3 {
+                font-size: 11px;
+                margin: 6px 0 4px 0;
+            }
+
+            h4 {
+                font-size: 9px;
+                margin: 4px 0 2px 0;
+            }
+
+            /* Remove forced page breaks - let content flow */
+            .page-break {
+                page-break-before: auto;
+            }
+
+            /* Orphans and widows control */
+            p, li {
+                orphans: 3;
+                widows: 3;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>SmartRecruitz AI Agents - 6 POCs</h1>
+<p class="subtitle">Based on PRD: ZennialPro SmartRecruitZ (Section 6.2 - In-Scope Capabilities)<br>Clear Data Sources, Input/Output Specifications & Validation Methods</p>
+
+<!-- Module Boundary Section -->
+<div class="data-source" style="background: #fff3e0; border-color: #ff9800;">
+    <h4 style="color: #e65100;">SmartRecruitz Ecosystem - Module Boundaries</h4>
+    <p>SmartRecruitz is part of a larger ecosystem with <strong>4 separate modules</strong>. This document covers only the <strong>SmartRecruitz core module</strong>.</p>
+    <table>
+        <tr>
+            <th>Module</th>
+            <th>Scope</th>
+            <th>Status</th>
+        </tr>
+        <tr style="background: #e8f5e9;">
+            <td><strong>SmartRecruitz</strong></td>
+            <td>Core platform - 6 AI POC Agents (this document)</td>
+            <td><strong>IN SCOPE</strong></td>
+        </tr>
+        <tr>
+            <td>Background Check</td>
+            <td>External verification service integration</td>
+            <td>Separate Module</td>
+        </tr>
+        <tr>
+            <td>Interview as Service</td>
+            <td>Video interview conducting & recording</td>
+            <td>Separate Module</td>
+        </tr>
+        <tr>
+            <td>LMS</td>
+            <td>Learning Management System integration</td>
+            <td>Separate Module</td>
+        </tr>
+    </table>
+</div>
+
+<!-- PRD Reference Section -->
+<div class="data-source" style="background: #e8f0fe; border-color: #1a73e8;">
+    <h4 style="color: #1a73e8;">PRD Reference: ZennialPro SmartRecruitZ (Section 6.2 - In-Scope Capabilities)</h4>
+    <p>All 6 POCs are designed to implement the capabilities defined in <strong>PRD Section 6.2</strong>. The mapping below shows how each POC aligns with the PRD requirements.</p>
+    <table>
+        <tr>
+            <th>PRD Section</th>
+            <th>PRD Capability</th>
+            <th>POC Coverage</th>
+        </tr>
+        <tr>
+            <td><strong>6.2.1</strong></td>
+            <td>Candidate Identity & Trust</td>
+            <td>POC 2 (Duplicate Identification), POC 3 (Verification Agent)</td>
+        </tr>
+        <tr>
+            <td><strong>6.2.2</strong></td>
+            <td>Skill Signal Management</td>
+            <td>POC 1 (Resume Parser & Skill Normalization)</td>
+        </tr>
+        <tr>
+            <td><strong>6.2.3</strong></td>
+            <td>Interview & Readiness Validation</td>
+            <td>POC 4 (Interview Question Generation), POC 5 (Interview Validation & Readiness)</td>
+        </tr>
+        <tr>
+            <td><strong>6.2.4</strong></td>
+            <td>Talent Pooling & Discovery</td>
+            <td>POC 6 (Job Matching & Candidate Search)</td>
+        </tr>
+    </table>
+</div>
+
+<!-- POCs Summary Table -->
+<h2 class="page-break">SmartRecruitz AI Agents - 6 POCs</h2>
+
+<table>
+    <tr>
+        <th>#</th>
+        <th>POC Name</th>
+        <th>AI Model / Tools</th>
+        <th>PRD Capability Mapping</th>
+        <th>Priority</th>
+    </tr>
+    <tr style="background: #e3f2fd;">
+        <td colspan="5"><strong>Candidate Onboarding & Verification</strong></td>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Resume Parser & Skill Normalization Agent</td>
+        <td>Claude Vision</td>
+        <td>Verified Candidate Profile + Skill Signal Engine</td>
+        <td>HIGH</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Duplicate Identification Agent</td>
+        <td>Claude 3.5 Sonnet</td>
+        <td>Candidate Identity & Trust Foundation</td>
+        <td>HIGH</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Verification Agent (Identity + Experience)</td>
+        <td>Claude Vision, Web Scraping, Apollo</td>
+        <td>Candidate Identity & Trust Foundation</td>
+        <td>HIGH</td>
+    </tr>
+    <tr style="background: #e8f5e9;">
+        <td colspan="5"><strong>L1 Interview & Talent Pool Entry</strong></td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>Interview Question Generation Agent</td>
+        <td>Claude 3.5 / GPT-4.0 (TBD)</td>
+        <td>Interview & Readiness Validation</td>
+        <td>HIGH</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>Interview Validation & Readiness Scoring Agent</td>
+        <td>Claude 3.5 Sonnet</td>
+        <td>Interview Validation + Talent Pooling</td>
+        <td>HIGH</td>
+    </tr>
+    <tr style="background: #fff3e0;">
+        <td colspan="5"><strong>Hiring Manager - Search & Selection</strong></td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>Job Matching & Candidate Search Agent</td>
+        <td>Claude 3.5 Sonnet</td>
+        <td>Talent Pooling & Discovery</td>
+        <td>HIGH</td>
+    </tr>
+</table>
+
+<!-- Two User Flows -->
+<h3>Platform User Flows</h3>
+<div class="flowchart">
+<pre>
+CANDIDATES FLOW (Before Talent Pool Entry):
+===========================================
+Resume Upload → POC 1 (Parse + Skill Norm + Quick Dup Check) → [candidates_staging]
+                                                                        ↓
+                                              POC 2 (Deep Duplicate Analysis)
+                                                                        ↓
+                                    ┌───────────────────────────────────┴───────────────────────────────────┐
+                                    ↓                                                                       ↓
+                          [UNIQUE - Move to candidates_main]                                    [DUPLICATE - Merge/Review/Reject]
+                                    ↓
+                          POC 3 (Identity + Experience Verification)
+                                    ↓
+                          POC 4 (Interview Question Generation) ← L1 Screening
+                                    ↓
+                          [Video Interview Service]
+                                    ↓
+                          POC 5 (Interview Validation + Readiness Score)
+                                    ↓
+                          ┌─────────────────────────────────────┐
+                          │         VERIFIED TALENT POOL        │
+                          └─────────────────────────────────────┘
+
+
+HIRING MANAGERS FLOW (Search from Talent Pool):
+===============================================
+JD Upload / Manual Skills → POC 6 (Job Matching + AI Search) → Select Candidates → Close Candidate
+         ↓                              ↓
+    - Skills search              Candidates from
+    - Domain search              Talent Pool (already
+    - Match percentage           interviewed & validated)
+                                        │
+                                        ↓
+                        ┌───────────────────────────────────┐
+                        │  If Additional Test Required:     │
+                        │  POC 4 → Video Interview → POC 5 (Re-test)  │
+                        └───────────────────────────────────┘
+</pre>
+</div>
+
+<!-- POC 1: Resume Parser & Skill Normalization -->
+<div class="poc-section">
+    <h2>POC 1: Resume Parser & Skill Normalization Agent</h2>
+
+    <div class="objective">
+        <h4>Objective</h4>
+        <p>Parse unstructured resume documents (PDF, DOCX, TXT), extract structured candidate profile data, and normalize skills to a standard taxonomy with proficiency levels. This combined agent handles both document extraction and skill standardization in a single flow.</p>
+    </div>
+
+    <div class="problem">
+        <h4>Problem Statement</h4>
+        <p>Candidates upload resumes in various formats with inconsistent structures. Skills are listed inconsistently ("JS", "JavaScript", "ECMAScript" are the same). Manual data entry takes 15-20 minutes per candidate and is error-prone. SmartRecruitz needs to create "structured, verified candidate dashboards" with "Normalized skill indicators for comparability across candidates" (PRD 6.2.1, 6.2.2).</p>
+    </div>
+
+    <div class="outcome">
+        <h4>Expected Outcome</h4>
+        <ul>
+            <li>Extract personal info, education, experience, skills from any resume format</li>
+            <li><strong>Identify domain for each experience</strong> (FinTech, Healthcare, E-Commerce, etc.)</li>
+            <li><strong>Calculate domain-wise experience</strong> (years/months per domain)</li>
+            <li>Extract certifications, projects, languages, and all available information</li>
+            <li>Normalize all skill variations to standard names (JS → JavaScript)</li>
+            <li>Calculate proficiency levels: Beginner/Intermediate/Advanced/Expert</li>
+            <li>Infer implied skills from experience descriptions</li>
+            <li>Create structured candidate profile ready for SmartRecruitz dashboard</li>
+            <li>95% accuracy on standard resume formats</li>
+            <li>Processing time: under 15 seconds per resume (including skill normalization)</li>
+        </ul>
+    </div>
+
+    <div class="approach">
+        <h4>Chosen Approach</h4>
+        <p><strong>AI-Powered Resume Parsing + Skill Normalization with Claude 3.5 Sonnet (Vision)</strong></p>
+        <p><strong>Step 1: Document Extraction</strong></p>
+        <ol>
+            <li>Upload resume file (PDF/DOCX/Image) directly to Claude AI</li>
+            <li>AI reads document using vision capabilities (no separate parser needed)</li>
+            <li>AI extracts all fields into structured JSON schema</li>
+        </ol>
+        <p><strong>Step 2: Skill Normalization (within same flow)</strong></p>
+        <ol>
+            <li>Send raw skills + experience context to Claude AI</li>
+            <li>AI maps skill variations to standard names (JS → JavaScript)</li>
+            <li>AI analyzes experience descriptions to assess proficiency levels</li>
+            <li>AI infers implied skills from project descriptions (e.g., "Built REST APIs" → HTTP, JSON, API Design)</li>
+            <li>Output normalized skill profile with evidence-backed proficiency</li>
+        </ol>
+        <p><strong>Step 3: Store & Validate</strong></p>
+        <ol>
+            <li>Validate extracted + normalized data</li>
+            <li>Store complete profile in database</li>
+        </ol>
+        <p><strong>Note:</strong> Both extraction and normalization happen in a single AI call using Claude Vision's multimodal capabilities.</p>
+    </div>
+
+    <div class="justification">
+        <h4>Justification vs Alternatives</h4>
+        <table>
+            <tr><th>Alternative</th><th>Why Not</th></tr>
+            <tr><td>PDF Parser + NLP</td><td>Two-step process, parser errors propagate, maintenance overhead</td></tr>
+            <tr><td>Regex/Rule-based parsing</td><td>Fails on varied formats, needs constant maintenance</td></tr>
+            <tr><td>Traditional NLP (spaCy)</td><td>Needs training data, lower accuracy, can't read files</td></tr>
+            <tr><td>Off-shelf parsers (Sovren)</td><td>Expensive ($), less customizable, external dependency</td></tr>
+        </table>
+        <p><strong>Why AI (Claude Vision):</strong></p>
+        <ul>
+            <li>Reads PDF/DOCX/Images directly - no external parser needed</li>
+            <li>Single step: File → AI → Structured Data</li>
+            <li>Works with ANY resume format without templates</li>
+            <li>Understands context, not just keywords</li>
+            <li>Handles handwritten, scanned, and poorly formatted resumes</li>
+        </ul>
+    </div>
+
+    <div class="data-source">
+        <h4>Data Source</h4>
+        <table>
+            <tr><th>Data</th><th>Source</th><th>Format</th></tr>
+            <tr><td>Resume File</td><td>Candidate uploads via SmartRecruitz portal</td><td>PDF, DOCX, TXT</td></tr>
+            <tr><td>Candidate ID</td><td>System-generated during registration</td><td>String</td></tr>
+        </table>
+    </div>
+
+    <div class="io-container">
+        <div class="input-box">
+            <h4>INPUT - What Agent Expects</h4>
+<pre>{
+  "candidate_id": "SR-2024-00123",
+  "resume_file": {
+    "file_path": "/uploads/resume_00123.pdf",
+    "file_type": "PDF",
+    "file_size_kb": 245,
+    "file_base64": "[base64_encoded_file]"
+  },
+  "extraction_config": {
+    "extract_skills": true,
+    "extract_experience": true,
+    "extract_education": true,
+    "extract_contact": true,
+    "extract_domain": true,
+    "extract_certifications": true,
+    "extract_projects": true,
+    "extract_languages": true
+  }
+}
+
+Note: File is sent directly to Claude AI.
+AI reads PDF/DOCX/Image using vision
+capabilities - no pre-processing needed.</pre>
+        </div>
+        <div class="output-box">
+            <h4>OUTPUT - What Agent Returns</h4>
+<pre>{
+  "candidate_id": "SR-2024-00123",
+  "parse_status": "SUCCESS",
+  "confidence_score": 0.94,
+
+  "personal_info": {
+    "full_name": "John Smith",
+    "email": "john.smith@email.com",
+    "phone": "+1-555-1234",
+    "current_title": "Senior Software Engineer"
+  },
+
+  "experience": [
+    {
+      "company": "Tech Corp",
+      "title": "Senior Developer",
+      "start_date": "2020-01",
+      "end_date": "2024-01",
+      "duration_months": 48,
+      "domain": "FinTech",
+      "responsibilities": [
+        "Built microservices using Python",
+        "Led team of 5 developers"
+      ],
+      "is_current": true
+    },
+    {
+      "company": "StartupXYZ",
+      "title": "Software Engineer",
+      "start_date": "2018-01",
+      "end_date": "2020-01",
+      "duration_months": 24,
+      "domain": "E-Commerce",
+      "responsibilities": [
+        "Developed React applications"
+      ]
+    }
+  ],
+
+  "education": [
+    {
+      "institution": "State University",
+      "degree": "BS",
+      "field": "Computer Science",
+      "graduation_year": 2018
+    }
+  ],
+
+  "skills_raw": ["Python", "React", "AWS", "Docker"],
+
+  "skills_normalized": [
+    {
+      "standard_name": "Python",
+      "original_terms": ["Python"],
+      "proficiency": "Advanced",
+      "evidence": "4 years building microservices"
+    },
+    {
+      "standard_name": "React",
+      "original_terms": ["React"],
+      "proficiency": "Intermediate",
+      "evidence": "2 years frontend development"
+    },
+    {
+      "standard_name": "AWS",
+      "original_terms": ["AWS"],
+      "proficiency": "Intermediate",
+      "evidence": "Mentioned in Tech Corp role"
+    }
+  ],
+
+  "implied_skills": [
+    {
+      "skill": "Microservices Architecture",
+      "inferred_from": "Built microservices using Python",
+      "confidence": 0.85
+    },
+    {
+      "skill": "Team Leadership",
+      "inferred_from": "Led team of 5 developers",
+      "confidence": 0.90
+    }
+  ],
+
+  "total_experience_years": 6,
+
+  "primary_domain": "FinTech",
+
+  "domain_wise_experience": [
+    {
+      "domain": "FinTech",
+      "experience_years": 4,
+      "experience_months": 48,
+      "companies": ["Tech Corp"],
+      "roles": ["Senior Developer"]
+    },
+    {
+      "domain": "E-Commerce",
+      "experience_years": 2,
+      "experience_months": 24,
+      "companies": ["StartupXYZ"],
+      "roles": ["Software Engineer"]
+    }
+  ],
+
+  "certifications": [
+    {
+      "name": "AWS Solutions Architect",
+      "issuer": "Amazon Web Services",
+      "year": 2022,
+      "valid_until": "2025-06"
+    }
+  ],
+
+  "projects": [
+    {
+      "name": "Payment Gateway Integration",
+      "description": "Built payment processing system",
+      "technologies": ["Python", "AWS", "PostgreSQL"],
+      "domain": "FinTech"
+    }
+  ],
+
+  "languages": [
+    {"language": "English", "proficiency": "Native"},
+    {"language": "Spanish", "proficiency": "Intermediate"}
+  ],
+
+  "parsing_warnings": [],
+
+  "duplicate_pre_check": {
+    "status": "NO_MATCH",
+    "checked_fields": ["email", "phone"],
+    "potential_matches": []
+  },
+
+  "storage": {
+    "table": "candidates_staging",
+    "candidate_status": "PENDING",
+    "awaiting": "POC 2 - Deep Duplicate Analysis"
+  }
+}</pre>
+        </div>
+    </div>
+
+    <div class="flowchart">
+        <h4>Process Flow</h4>
+<pre>
+[Resume Upload] → [Send to Claude AI (Vision)]
+(PDF/DOCX/Image)           ↓
+                [AI Reads & Extracts ALL Data]
+                    (No external parser)
+                           ↓
+                [Extract Complete Profile]
+                    - Personal Info, Contact
+                    - Experience with Domain identification
+                    - Education, Certifications
+                    - Projects, Languages
+                    - Raw Skills
+                           ↓
+                [AI Identifies Domain per Experience]
+                    - Classify company/role to domain
+                    - Calculate domain-wise experience
+                    - Identify primary domain
+                           ↓
+                [AI Normalizes Skills]
+                    - Map variations to standard names
+                    - Calculate proficiency from context
+                    - Infer implied skills
+                           ↓
+                [Structured JSON Output]
+                    (Complete Profile + Domain + Normalized Skills)
+                           ↓
+                [Validation]
+                           ↓
+        ┌──────────────────────────────────────────────┐
+        │  QUICK DUPLICATE PRE-CHECK (Email/Phone)     │
+        │  Check candidates_main for exact match       │
+        └──────────────────────────────────────────────┘
+                           ↓
+           ┌───────────────┴───────────────┐
+           ↓                               ↓
+   [No Match Found]              [Potential Match Found]
+           ↓                               ↓
+   status: "PENDING"             status: "DUPLICATE_REVIEW"
+           ↓                               ↓
+           └───────────────┬───────────────┘
+                           ↓
+            [Save to candidates_staging table]
+                           ↓
+            [Trigger POC 2: Deep Duplicate Analysis]
+</pre>
+    </div>
+
+    <div class="validation">
+        <h4>How Validation Happens</h4>
+        <table>
+            <tr><th>Validation Check</th><th>Method</th><th>Pass Criteria</th></tr>
+            <tr>
+                <td>Email Format</td>
+                <td>Regex validation</td>
+                <td>Valid email pattern (xxx@xxx.xxx)</td>
+            </tr>
+            <tr>
+                <td>Phone Format</td>
+                <td>Phone number parser library</td>
+                <td>Valid phone with country code</td>
+            </tr>
+            <tr>
+                <td>Date Consistency</td>
+                <td>AI logic check</td>
+                <td>End date > Start date, no future dates</td>
+            </tr>
+            <tr>
+                <td>Experience Timeline</td>
+                <td>AI validates no overlapping full-time jobs</td>
+                <td>Logical timeline without conflicts</td>
+            </tr>
+            <tr>
+                <td>Domain Classification</td>
+                <td>AI domain identification + master list validation</td>
+                <td>Domain mapped to standard taxonomy (FinTech, Healthcare, etc.)</td>
+            </tr>
+            <tr>
+                <td>Domain Experience Sum</td>
+                <td>Calculation validation</td>
+                <td>Sum of domain-wise experience = total experience</td>
+            </tr>
+            <tr>
+                <td>Quick Duplicate Pre-Check</td>
+                <td>Exact match query on candidates_main (email, phone)</td>
+                <td>Flag if exact match found, proceed to staging regardless</td>
+            </tr>
+            <tr>
+                <td>Required Fields</td>
+                <td>Schema validation (Pydantic)</td>
+                <td>Name, at least 1 experience or education</td>
+            </tr>
+            <tr>
+                <td>Confidence Score</td>
+                <td>AI self-assessment</td>
+                <td>Score > 0.7 to auto-accept, else manual review</td>
+            </tr>
+        </table>
+        <p><strong>Validation Outcome:</strong> If validation fails, profile is flagged for manual review with specific error messages.</p>
+    </div>
+</div>
+
+<!-- POC 2: Duplicate Identification -->
+<div class="poc-section">
+    <h2>POC 2: Duplicate Identification Agent</h2>
+
+    <div class="objective">
+        <h4>Objective</h4>
+        <p>Perform deep duplicate analysis on candidates in <strong>candidates_staging</strong> table (from POC 1) before moving them to the main database. Prevents duplicate profiles in SmartRecruitz. PRD Section 11.2: "System must prevent creation of duplicate profiles."</p>
+    </div>
+
+    <div class="problem">
+        <h4>Problem Statement</h4>
+        <p>Candidates re-apply with different emails, updated resumes, or name variations. Simple email matching misses 60% of duplicates. Duplicates cause wasted screening effort and data quality issues.</p>
+    </div>
+
+    <div class="outcome">
+        <h4>Expected Outcome</h4>
+        <ul>
+            <li>Detect 95%+ of duplicate profiles</li>
+            <li>Handle name variations (Bob = Robert)</li>
+            <li>Match on experience fingerprint when email differs</li>
+            <li>Provide evidence for why profiles match</li>
+            <li><strong>Unique candidates → Move to candidates_main table</strong></li>
+            <li><strong>Duplicates → Flag for merge/reject/manual review</strong></li>
+        </ul>
+    </div>
+
+    <div class="approach">
+        <h4>Chosen Approach</h4>
+        <p><strong>Two-Step Process: Database Query + AI Verification</strong></p>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Done By</th></tr>
+            <tr>
+                <td><strong>Step 1</strong></td>
+                <td>Query database to find potential matching candidates using:
+                    <ul>
+                        <li>Exact match on email</li>
+                        <li>Exact match on phone (normalized)</li>
+                        <li>Fuzzy match on name (Levenshtein distance)</li>
+                        <li>Similar experience (company + dates)</li>
+                    </ul>
+                </td>
+                <td><strong>Database Query</strong><br>(SQL/Elasticsearch)</td>
+            </tr>
+            <tr>
+                <td><strong>Step 2</strong></td>
+                <td>Send new candidate + potential matches to AI for:
+                    <ul>
+                        <li>Semantic name comparison (Bob = Robert)</li>
+                        <li>Experience timeline validation</li>
+                        <li>Final duplicate confidence score</li>
+                    </ul>
+                </td>
+                <td><strong>AI (Claude)</strong></td>
+            </tr>
+        </table>
+        <p><strong>Key Point:</strong> AI receives BOTH new candidate data AND existing potential matches from database. AI does NOT have direct database access.</p>
+    </div>
+
+    <div class="data-source">
+        <h4>Data Source</h4>
+        <table>
+            <tr><th>Data</th><th>Source</th><th>When Retrieved</th></tr>
+            <tr><td>New Candidate Data</td><td><strong>candidates_staging</strong> table (from POC 1)</td><td>Input to this agent</td></tr>
+            <tr><td>Potential Matches</td><td>Query from <strong>candidates_main</strong> table</td><td>Retrieved before AI call</td></tr>
+            <tr><td>Nickname Database</td><td>Internal lookup table</td><td>Loaded in AI prompt</td></tr>
+        </table>
+    </div>
+
+    <div class="io-container">
+        <div class="input-box">
+            <h4>INPUT (Sent to AI)</h4>
+<pre>{
+  "new_candidate": {
+    "candidate_id": "SR-2024-NEW-456",
+    "name": "Bob Smith",
+    "email": "bob.s.dev@gmail.com",
+    "phone": "+91-9876500001",
+    "experience": [
+      {
+        "company": "Infosys Limited",
+        "title": "Senior Developer",
+        "start_date": "2020-01",
+        "end_date": "2024-01"
+      }
+    ],
+    "education": {
+      "institution": "IIT Delhi",
+      "degree": "BTech",
+      "year": 2018
+    }
+  },
+
+  "potential_matches_from_db": [
+    {
+      "candidate_id": "SR-2023-OLD-123",
+      "name": "Robert Smith",
+      "email": "robert.smith@yahoo.com",
+      "phone": "+91-9876500001",
+      "experience": [
+        {
+          "company": "Infosys",
+          "title": "Senior Developer",
+          "start_date": "2020-01",
+          "end_date": "2024-01"
+        }
+      ],
+      "education": {
+        "institution": "IIT Delhi",
+        "degree": "BTech",
+        "year": 2018
+      },
+      "db_match_reason": "Phone number exact match"
+    }
+  ],
+
+  "threshold": 0.75
+}
+
+Note: potential_matches_from_db is retrieved
+from database BEFORE calling AI. AI compares
+new_candidate against these matches.</pre>
+        </div>
+        <div class="output-box">
+            <h4>OUTPUT</h4>
+<pre>{
+  "is_duplicate": true,
+  "confidence": 0.92,
+  "matched_profile": {
+    "candidate_id": "SR-2023-OLD-123",
+    "name": "Robert Smith",
+    "email": "robert.smith@yahoo.com",
+    "phone": "+91-9876500001"
+  },
+  "match_evidence": {
+    "phone_match": {
+      "score": 1.0,
+      "detail": "Exact phone number match"
+    },
+    "name_match": {
+      "score": 0.90,
+      "detail": "'Bob' is common nickname
+        for 'Robert', 'Smith' exact match"
+    },
+    "experience_match": {
+      "score": 0.95,
+      "detail": "Same company (Infosys),
+        same role, same dates 2020-2024"
+    },
+    "education_match": {
+      "score": 1.0,
+      "detail": "IIT Delhi, BTech, 2018"
+    }
+  },
+  "recommendation": "MERGE_PROFILES",
+  "action_required": "Review and merge
+    SR-2024-NEW-456 into SR-2023-OLD-123",
+
+  "final_action": {
+    "action_taken": "MANUAL_REVIEW",
+    "staging_status": "AWAITING_HR_REVIEW",
+    "moved_to_main": false,
+    "notification_sent": true,
+    "assigned_to": "hr_team_queue"
+  }
+}
+
+// Example: Unique Candidate (No Duplicate)
+{
+  "is_duplicate": false,
+  "confidence": 0.12,
+  "matched_profile": null,
+  "recommendation": "PROCEED",
+
+  "final_action": {
+    "action_taken": "MOVED_TO_MAIN",
+    "staging_status": "COMPLETED",
+    "moved_to_main": true,
+    "new_candidate_id": "SR-2024-00456",
+    "table": "candidates_main",
+    "status": "VERIFIED"
+  }
+}</pre>
+        </div>
+    </div>
+
+    <div class="flowchart">
+        <h4>Process Flow (Three-Step: Staging → Analysis → Main)</h4>
+<pre>
+STEP 1: READ FROM STAGING
+================================
+[candidates_staging] --> [Get candidate with status: PENDING or DUPLICATE_REVIEW]
+                              |
+                              v
+
+STEP 2: DATABASE QUERY (No AI)
+================================
+[Staging Candidate] --> [Query candidates_main]
+                              |
+                              v
+                   Search by: Email, Phone,
+                   Name (fuzzy), Company+Dates
+                              |
+                              v
+                   [Potential Matches: 0-N]
+                              |
+                              v
+
+STEP 3: AI VERIFICATION (Claude)
+================================
+[Staging Candidate] + [Matches] --> [Claude AI]
+                                         |
+                                         v
+                              AI Analyzes:
+                              - Name semantics (Bob=Robert?)
+                              - Timeline logic
+                              - Overall confidence
+                                         |
+                                         v
+                              [Duplicate Decision]
+                                         |
+                    ┌────────────────────┴────────────────────┐
+                    ↓                                         ↓
+          [UNIQUE - No Duplicate]                   [DUPLICATE FOUND]
+                    ↓                                         ↓
+    [Move to candidates_main]              ┌──────────────────┴──────────────────┐
+    [Delete from staging]                  ↓                    ↓                 ↓
+    [Status: VERIFIED]              [AUTO_MERGE]        [MANUAL_REVIEW]     [REJECT]
+                                          ↓                    ↓                 ↓
+                                   [Merge profiles]   [Flag for HR]    [Delete staging]
+                                   [Keep older ID]    [Keep in staging]  [Notify candidate]
+</pre>
+    </div>
+
+    <div class="validation">
+        <h4>How Validation Happens</h4>
+        <table>
+            <tr><th>Step</th><th>Validation Check</th><th>Method</th><th>Pass Criteria</th></tr>
+            <tr>
+                <td rowspan="4"><strong>Step 1<br>(Database)</strong></td>
+                <td>Email Match</td>
+                <td>Exact string comparison (case-insensitive)</td>
+                <td>100% match = potential duplicate</td>
+            </tr>
+            <tr>
+                <td>Phone Match</td>
+                <td>Normalized comparison (remove +, -, spaces)</td>
+                <td>100% match after normalization</td>
+            </tr>
+            <tr>
+                <td>Name Match</td>
+                <td>Fuzzy matching (Levenshtein distance)</td>
+                <td>Score > 80% = potential match</td>
+            </tr>
+            <tr>
+                <td>Experience Fingerprint</td>
+                <td>Compare Company + Date combinations</td>
+                <td>Same company + overlapping dates</td>
+            </tr>
+            <tr>
+                <td rowspan="3"><strong>Step 2<br>(AI)</strong></td>
+                <td>Semantic Name Match</td>
+                <td>AI checks nicknames, variations</td>
+                <td>Bob=Robert, Bill=William, etc.</td>
+            </tr>
+            <tr>
+                <td>Timeline Validation</td>
+                <td>AI validates experience makes sense</td>
+                <td>Logical career progression</td>
+            </tr>
+            <tr>
+                <td>Final Confidence</td>
+                <td>AI weighted scoring</td>
+                <td>> 75% = duplicate, 50-75% = review</td>
+            </tr>
+            <tr>
+                <td rowspan="3"><strong>Step 3<br>(Final Action)</strong></td>
+                <td>Unique Candidate</td>
+                <td>Move from staging to main</td>
+                <td>Confidence < 50% → candidates_main</td>
+            </tr>
+            <tr>
+                <td>High Confidence Duplicate</td>
+                <td>Auto-merge or reject</td>
+                <td>Confidence > 75% → merge/reject based on rules</td>
+            </tr>
+            <tr>
+                <td>Medium Confidence</td>
+                <td>Flag for HR manual review</td>
+                <td>50-75% → keep in staging, notify HR</td>
+            </tr>
+        </table>
+        <p><strong>Validation Outcome:</strong></p>
+        <ul>
+            <li><strong>Unique (< 50%):</strong> Move to candidates_main, delete from staging, status = VERIFIED</li>
+            <li><strong>Duplicate (> 75%):</strong> Auto-merge into existing profile OR reject and notify candidate</li>
+            <li><strong>Review (50-75%):</strong> Keep in staging with status = AWAITING_HR_REVIEW</li>
+        </ul>
+    </div>
+</div>
+
+<!-- POC 3: Verification Agent (Identity + Experience) -->
+<div class="poc-section">
+    <h2>POC 3: Verification Agent (Identity + Experience)</h2>
+
+    <div class="objective">
+        <h4>Objective</h4>
+        <p>Verify candidate identity by validating uploaded documents (ID proof, PAN card, Aadhaar) against claimed profile data. PRD Section 6.2.1: "Verified candidate identity onboarding."</p>
+    </div>
+
+    <div class="problem">
+        <h4>Problem Statement</h4>
+        <p>Candidates may provide false identity information. Manual document verification is time-consuming and inconsistent. Need automated verification to establish trust foundation.</p>
+    </div>
+
+    <div class="approach">
+        <h4>Chosen Approach</h4>
+        <p><strong>Claude Vision API for Document Verification</strong></p>
+        <p>Using <strong>Claude 3.5 Sonnet (Vision)</strong> via Anthropic API to perform OCR extraction, detect tampering/fraud indicators, and validate document authenticity through advanced image analysis.</p>
+        <ol>
+            <li>Candidate uploads ID document image (Aadhaar, PAN, Passport)</li>
+            <li>Send document image to <strong>Claude Vision API</strong></li>
+            <li>Claude extracts text data using multimodal OCR capabilities</li>
+            <li>Claude analyzes document for tampering indicators (fonts, edges, watermarks)</li>
+            <li>Compare extracted data against claimed data from registration form</li>
+            <li>Return verification result with confidence score</li>
+        </ol>
+    </div>
+
+    <div class="data-source">
+        <h4>Data Source - CRITICAL CLARIFICATION</h4>
+        <table>
+            <tr><th>Data</th><th>Source</th><th>Purpose</th></tr>
+            <tr><td>Document Image</td><td>Candidate uploads</td><td>Extract actual data</td></tr>
+            <tr><td>Claimed Data</td><td>Candidate registration form</td><td>Compare against extracted</td></tr>
+            <tr><td>AI Processing</td><td>Claude 3.5 Sonnet (Vision)</td><td>OCR + fraud detection</td></tr>
+        </table>
+        <p class="important">NOTE: We do NOT connect to Aadhaar/PAN databases. We verify INTERNAL CONSISTENCY between document and claimed data.</p>
+    </div>
+
+    <div class="io-container">
+        <div class="input-box">
+            <h4>INPUT</h4>
+<pre>{
+  "candidate_id": "SR-2024-00123",
+  "verification_type": "IDENTITY",
+  "document": {
+    "type": "AADHAAR_CARD",
+    "image_front": "[base64_image]",
+    "image_back": "[base64_image]"
+  },
+  "claimed_data": {
+    "full_name": "Rahul Kumar Sharma",
+    "date_of_birth": "1995-05-15",
+    "gender": "Male"
+  }
+}</pre>
+        </div>
+        <div class="output-box">
+            <h4>OUTPUT</h4>
+<pre>{
+  "verification_id": "VER-2024-78901",
+  "status": "VERIFIED",
+  "confidence_score": 96,
+
+  "extracted_data": {
+    "full_name": "Rahul Kumar Sharma",
+    "date_of_birth": "1995-05-15",
+    "gender": "Male",
+    "document_number": "XXXX-XXXX-1234"
+  },
+
+  "data_match": {
+    "name": {"match": true, "score": 100},
+    "dob": {"match": true, "score": 100},
+    "gender": {"match": true, "score": 100}
+  },
+
+  "document_authenticity": {
+    "is_authentic": true,
+    "fraud_indicators": [],
+    "quality_score": 92
+  },
+
+  "verification_result": {
+    "identity_verified": true,
+    "can_proceed": true,
+    "flags": []
+  }
+}</pre>
+        </div>
+    </div>
+
+    <div class="validation">
+        <h4>How Validation Happens</h4>
+        <table>
+            <tr><th>Validation Check</th><th>Method</th><th>Pass Criteria</th></tr>
+            <tr>
+                <td>Document Image Quality</td>
+                <td>AI Vision checks resolution, clarity, completeness</td>
+                <td>All text readable, no cropped edges, quality > 70%</td>
+            </tr>
+            <tr>
+                <td>OCR Extraction Confidence</td>
+                <td>AI returns confidence for each extracted field</td>
+                <td>Field confidence > 80% to be used for matching</td>
+            </tr>
+            <tr>
+                <td>Name Match</td>
+                <td>Compare extracted name vs claimed name (fuzzy)</td>
+                <td>Match score > 90% (allows minor spelling variations)</td>
+            </tr>
+            <tr>
+                <td>DOB Match</td>
+                <td>Exact date comparison</td>
+                <td>100% match required (no tolerance)</td>
+            </tr>
+            <tr>
+                <td>Document Tampering Check</td>
+                <td>AI analyzes fonts, edges, patterns, watermarks</td>
+                <td>No fraud indicators detected</td>
+            </tr>
+            <tr>
+                <td>Document Type Recognition</td>
+                <td>AI identifies document type (Aadhaar, PAN, Passport)</td>
+                <td>Matches declared document type</td>
+            </tr>
+        </table>
+        <p><strong>Validation Outcome:</strong> If any critical check fails, verification is marked "FAILED" with specific reason. Candidate can re-upload clearer document.</p>
+    </div>
+</div>
+
+
+<!-- POC 4: Interview Question Generation Agent -->
+<div class="poc-section">
+    <h2>POC 4: Interview Question Generation Agent</h2>
+
+    <div class="objective">
+        <h4>Objective</h4>
+        <p>Generate personalized L1 interview questions based on candidate's specific experience, skills, and knowledge areas. Ensure questions are unique per candidate and not repeated across different interviews to maintain assessment integrity.</p>
+    </div>
+
+    <div class="problem">
+        <h4>Problem Statement</h4>
+        <p>Current L1 interviews use generic question banks that don't target candidate-specific experience. Same questions are asked to all candidates, leading to leaked questions and memorized answers. Interviewers waste time asking about irrelevant areas. PRD requires "Standardized yet personalized evaluation" - questions should be consistent in quality but tailored to individual candidates.</p>
+    </div>
+
+    <div class="outcome">
+        <h4>Expected Outcome</h4>
+        <ul>
+            <li>Generate 10-15 personalized questions per candidate based on their profile</li>
+            <li>Questions target areas where candidate claims expertise (to verify claims)</li>
+            <li>Each candidate gets unique questions - not repeated from other candidates</li>
+            <li>Questions maintain consistent difficulty level per role requirement</li>
+            <li>Reduce question leakage risk by 90%+</li>
+            <li>Interview preparation time reduced from 15 mins to 2 mins</li>
+            <li><strong>L1 Interview:</strong> Questions based on candidate's target role (generic template)</li>
+            <li><strong>Additional Interview:</strong> Questions based on actual JD from Hiring Manager</li>
+        </ul>
+    </div>
+
+    <div class="approach">
+        <h4>Chosen Approach</h4>
+        <p><strong>AI-Powered Personalized Question Generation with Deduplication (Two-Stage)</strong></p>
+        <p>Using <strong>Claude 3.5 Sonnet</strong> (Anthropic API) or <strong>GPT-4.0</strong> (OpenAI API) for intelligent question generation. <span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">AI Model: To Be Finalized</span></p>
+
+        <h4 style="margin-top: 15px; color: #1976d2;">Stage 1: L1 Interview (Before Talent Pool)</h4>
+        <ol>
+            <li>Retrieve candidate's skill profile and experience (from POC 1)</li>
+            <li>Get candidate's <strong>Target Role</strong> (self-declared during registration)</li>
+            <li>Load <strong>Generic Role Template</strong> from master database (e.g., "Senior Python Developer" requirements)</li>
+            <li>Send profile + generic requirements to AI model</li>
+            <li>AI generates questions to validate claimed skills</li>
+            <li>Check against history database to avoid repetition</li>
+            <li>Output: L1 Screening Questions</li>
+        </ol>
+
+        <h4 style="margin-top: 15px; color: #2e7d32;">Stage 2: Additional Interview (After POC 6 Selection - If Required)</h4>
+        <ol>
+            <li>Hiring Manager selects candidate from Talent Pool (POC 6)</li>
+            <li>HM requests additional test for specific job</li>
+            <li>Load <strong>Actual JD requirements</strong> from Hiring Manager's job posting</li>
+            <li>Send profile + job-specific requirements to AI model</li>
+            <li>AI generates job-specific questions</li>
+            <li>Output: Job-Specific Questions</li>
+        </ol>
+
+        <p style="font-size: 12px; color: #92400e; margin-top: 10px;"><strong>Note:</strong> Final selection between Claude 3.5 Sonnet and GPT-4.0 to be determined based on POC evaluation (quality, cost, integration factors).</p>
+    </div>
+
+    <div class="justification">
+        <h4>Justification vs Alternatives</h4>
+        <table>
+            <tr><th>Alternative</th><th>Why Not</th></tr>
+            <tr><td>Static Question Bank</td><td>Same questions for all = leaked questions, memorized answers</td></tr>
+            <tr><td>Random Selection from Pool</td><td>May ask irrelevant questions, wastes interview time</td></tr>
+            <tr><td>Manual Question Writing</td><td>Time-consuming (15+ mins/candidate), inconsistent quality</td></tr>
+            <tr><td>Template-based Generation</td><td>Limited variation, still predictable patterns</td></tr>
+        </table>
+        <p><strong>Why AI (Claude/GPT-4):</strong> AI can analyze candidate's unique experience (e.g., "built microservices at scale") and generate specific questions ("Explain how you handled service discovery in your microservices architecture"). Infinite variation, consistent quality, targets actual claimed skills.</p>
+    </div>
+
+    <div class="data-source">
+        <h4>Data Source</h4>
+        <table>
+            <tr><th>Data</th><th>Source</th><th>Purpose</th></tr>
+            <tr><td>Candidate Profile</td><td>POC 1: Resume Parser output</td><td>Experience, projects, responsibilities</td></tr>
+            <tr><td>Normalized Skills</td><td>POC 1: Skill Normalization output</td><td>Skills with proficiency levels</td></tr>
+            <tr style="background: #fff3e0;"><td><strong>Job Requirements (L1 Interview)</strong></td><td>Candidate's Target Role (self-declared during registration) + Generic Role Template from master database</td><td>Generic requirements for role type (e.g., "Senior Python Developer" template)</td></tr>
+            <tr style="background: #e8f5e9;"><td><strong>Job Requirements (Additional Interview)</strong></td><td>Actual JD from Hiring Manager (via POC 6)</td><td>Job-specific requirements when HM requests additional test</td></tr>
+            <tr><td>Question History</td><td>SmartRecruitz database</td><td>Previously asked questions (for deduplication)</td></tr>
+            <tr><td>Question Templates</td><td>Internal question framework database</td><td>Question patterns by skill category</td></tr>
+        </table>
+        <p style="margin-top: 10px; font-size: 12px; color: #666;"><strong>Note:</strong> At L1 stage, candidate has NOT applied to a specific job yet. Questions are based on their target role. Job-specific questions come only when Hiring Manager selects candidate and requests additional interview.</p>
+    </div>
+
+    <div class="io-container">
+        <div class="input-box">
+            <h4>INPUT - What Agent Expects</h4>
+<pre>{
+  "candidate_id": "SR-2024-00123",
+  "interview_type": "L1_SCREENING",
+  "target_position": "Senior Python Developer",
+
+  "candidate_profile": {
+    "name": "Rahul Sharma",
+    "total_experience_years": 4,
+    "current_title": "Senior Developer"
+  },
+
+  "experience_highlights": [
+    {
+      "company": "Tech Corp",
+      "role": "Senior Developer",
+      "duration_months": 48,
+      "key_responsibilities": [
+        "Architected microservices handling 10M requests/day",
+        "Led team of 5 developers",
+        "Implemented CI/CD with Docker and Jenkins"
+      ],
+      "technologies_used": ["Python", "FastAPI", "Docker", "AWS"]
+    },
+    {
+      "company": "StartupXYZ",
+      "role": "Software Engineer",
+      "duration_months": 24,
+      "key_responsibilities": [
+        "Built REST APIs for mobile app",
+        "Developed React dashboard",
+        "Integrated payment gateway"
+      ]
+    }
+  ],
+
+  "skill_profile": [
+    {"skill": "Python", "proficiency": "Expert", "years": 4},
+    {"skill": "FastAPI", "proficiency": "Advanced", "years": 2},
+    {"skill": "Docker", "proficiency": "Intermediate", "years": 2},
+    {"skill": "React", "proficiency": "Intermediate", "years": 2},
+    {"skill": "REST API Design", "proficiency": "Advanced", "years": 4}
+  ],
+
+  // For L1_SCREENING: Generic role template
+  "job_requirements": {
+    "source": "GENERIC_ROLE_TEMPLATE",
+    "target_role": "Senior Python Developer",
+    "required_skills": ["Python", "REST API", "SQL"],
+    "nice_to_have": ["Docker", "AWS", "Microservices"],
+    "focus_areas": ["Backend Development", "System Design"]
+  },
+
+  // For JOB_SPECIFIC (Additional Interview):
+  // "job_requirements": {
+  //   "source": "HIRING_MANAGER_JD",
+  //   "job_id": "JOB-2024-00789",
+  //   "job_title": "Senior Backend Engineer - Payments",
+  //   "required_skills": ["Python", "Payment Gateway", "PCI-DSS"],
+  //   "focus_areas": ["Payment Processing", "Security"]
+  // },
+
+  "question_config": {
+    "total_questions": 12,
+    "difficulty": "MID_SENIOR",
+    "include_behavioral": true,
+    "include_technical": true,
+    "include_experience_verification": true
+  }
+}</pre>
+        </div>
+        <div class="output-box">
+            <h4>OUTPUT - Generated Questions</h4>
+<pre>{
+  "interview_id": "INT-2024-00456",
+  "candidate_id": "SR-2024-00123",
+  "generated_at": "2024-02-15T10:30:00Z",
+
+  "questions": [
+    {
+      "q_id": "Q-001",
+      "category": "EXPERIENCE_VERIFICATION",
+      "question": "You mentioned handling 10M requests/day at Tech Corp. Walk me through the architecture decisions you made to achieve this scale. What were the bottlenecks you faced?",
+      "targets_skill": "System Design",
+      "targets_experience": "Tech Corp - Microservices",
+      "difficulty": "SENIOR",
+      "expected_answer_points": [
+        "Load balancing strategy",
+        "Database optimization",
+        "Caching implementation",
+        "Monitoring & alerting"
+      ],
+      "follow_up_questions": [
+        "How did you handle database connection pooling?",
+        "What monitoring tools did you use?"
+      ],
+      "time_estimate_mins": 5
+    },
+    {
+      "q_id": "Q-002",
+      "category": "TECHNICAL",
+      "question": "Explain how FastAPI's dependency injection works. How did you use it in your microservices at Tech Corp?",
+      "targets_skill": "FastAPI",
+      "difficulty": "MID",
+      "expected_answer_points": [
+        "Depends() function",
+        "Lifecycle management",
+        "Database session handling",
+        "Authentication middleware"
+      ],
+      "time_estimate_mins": 4
+    },
+    {
+      "q_id": "Q-003",
+      "category": "TECHNICAL",
+      "question": "You built REST APIs for payment integration at StartupXYZ. How did you handle idempotency to prevent duplicate transactions?",
+      "targets_skill": "REST API Design",
+      "targets_experience": "Payment Gateway Integration",
+      "difficulty": "SENIOR",
+      "expected_answer_points": [
+        "Idempotency keys",
+        "Request deduplication",
+        "Transaction handling",
+        "Error recovery"
+      ],
+      "time_estimate_mins": 4
+    },
+    {
+      "q_id": "Q-004",
+      "category": "TECHNICAL",
+      "question": "Compare WSGI vs ASGI in Python. Given your experience with FastAPI, when would you choose one over the other?",
+      "targets_skill": "Python",
+      "difficulty": "MID",
+      "expected_answer_points": [
+        "Sync vs Async handling",
+        "Performance implications",
+        "Use case scenarios"
+      ],
+      "time_estimate_mins": 3
+    },
+    {
+      "q_id": "Q-005",
+      "category": "BEHAVIORAL",
+      "question": "You led a team of 5 developers. Describe a situation where team members disagreed on a technical approach. How did you resolve it?",
+      "targets_skill": "Team Leadership",
+      "targets_experience": "Tech Corp - Team Lead",
+      "difficulty": "MID",
+      "evaluation_criteria": [
+        "Conflict resolution approach",
+        "Decision-making process",
+        "Team collaboration"
+      ],
+      "time_estimate_mins": 4
+    },
+    {
+      "q_id": "Q-006",
+      "category": "TECHNICAL",
+      "question": "Explain your Docker CI/CD pipeline at Tech Corp. How did you handle secrets management and environment-specific configurations?",
+      "targets_skill": "Docker",
+      "targets_experience": "CI/CD Implementation",
+      "difficulty": "MID",
+      "expected_answer_points": [
+        "Multi-stage builds",
+        "Secrets management",
+        "Environment variables",
+        "Deployment strategies"
+      ],
+      "time_estimate_mins": 4
+    },
+    {
+      "q_id": "Q-007",
+      "category": "EXPERIENCE_VERIFICATION",
+      "question": "Describe the React dashboard you built at StartupXYZ. What state management approach did you use and why?",
+      "targets_skill": "React",
+      "difficulty": "MID",
+      "expected_answer_points": [
+        "State management choice (Redux/Context/etc)",
+        "Component architecture",
+        "Data fetching approach"
+      ],
+      "time_estimate_mins": 4
+    },
+    {
+      "q_id": "Q-008",
+      "category": "TECHNICAL",
+      "question": "How do you handle database migrations in a microservices environment where multiple services share some data?",
+      "targets_skill": "System Design",
+      "difficulty": "SENIOR",
+      "expected_answer_points": [
+        "Migration strategies",
+        "Data consistency",
+        "Service coordination",
+        "Rollback procedures"
+      ],
+      "time_estimate_mins": 4
+    }
+  ],
+
+  "question_metadata": {
+    "total_generated": 12,
+    "technical_questions": 6,
+    "behavioral_questions": 2,
+    "experience_verification": 4,
+    "estimated_interview_duration_mins": 45,
+    "difficulty_distribution": {
+      "MID": 7,
+      "SENIOR": 5
+    }
+  },
+
+  "deduplication_check": {
+    "checked_against_history": true,
+    "similar_questions_found": 0,
+    "unique_questions_generated": true,
+    "question_hashes_stored": true
+  },
+
+  "interviewer_guide": {
+    "focus_areas": [
+      "Verify microservices experience at scale",
+      "Assess Python/FastAPI depth",
+      "Validate team leadership claims"
+    ],
+    "red_flags_to_watch": [
+      "Cannot explain 10M requests architecture in detail",
+      "Unfamiliar with FastAPI dependency injection",
+      "Vague on payment integration specifics"
+    ]
+  }
+}</pre>
+        </div>
+    </div>
+
+    <div class="flowchart">
+        <h4>Process Flow (Two-Stage Question Generation)</h4>
+<pre>
+STAGE 1: L1 INTERVIEW (Before Talent Pool)
+==========================================
+[Profile + Skills (POC1)] + [Candidate's Target Role]
+                         |
+                         v
+              [Load Generic Role Template]
+              (e.g., "Senior Python Developer" requirements)
+                         |
+                         v
+              Identify Key Knowledge Areas:
+              - Past projects
+              - Technologies used
+              - Claimed expertise
+                         |
+                         v
+              AI Question Generation (Claude/GPT-4)
+                         |
+                         v
+              Deduplication Check <-- Question History DB
+                         |
+                         v
+              OUTPUT: L1 Screening Questions --> Video Interview --> POC 5
+
+
+STAGE 2: ADDITIONAL INTERVIEW (After POC 6 Selection - If Required)
+===================================================================
+[Hiring Manager Selects Candidate] --> [Request Additional Test]
+                         |
+                         v
+[Profile + Skills] + [Actual JD from Hiring Manager]
+                         |
+                         v
+              [Load Job-Specific Requirements]
+              (from HM's job posting)
+                         |
+                         v
+              AI Question Generation (Claude/GPT-4)
+                         |
+                         v
+              OUTPUT: Job-Specific Questions --> Video Interview --> POC 5
+</pre>
+    </div>
+
+    <h4>Key Features: Question Non-Repetition</h4>
+    <table>
+        <tr>
+            <th>Feature</th>
+            <th>How It Works</th>
+            <th>Benefit</th>
+        </tr>
+        <tr>
+            <td>Question Hashing</td>
+            <td>Each generated question is hashed and stored</td>
+            <td>Prevent exact duplicates</td>
+        </tr>
+        <tr>
+            <td>Semantic Similarity Check</td>
+            <td>AI compares new questions against recent history for similar meaning</td>
+            <td>Prevent paraphrased duplicates</td>
+        </tr>
+        <tr>
+            <td>Experience-Based Targeting</td>
+            <td>Questions are generated from candidate's UNIQUE experience</td>
+            <td>Naturally different questions per candidate</td>
+        </tr>
+        <tr>
+            <td>Time-Based Rotation</td>
+            <td>Question patterns rotate every 30 days</td>
+            <td>Fresh questions even for similar profiles</td>
+        </tr>
+        <tr>
+            <td>Candidate History Tracking</td>
+            <td>If candidate re-applies, system knows previous questions</td>
+            <td>Never repeat questions for same candidate</td>
+        </tr>
+    </table>
+
+    <div class="validation">
+        <h4>How Validation Happens</h4>
+        <table>
+            <tr><th>Validation Check</th><th>Method</th><th>Pass Criteria</th></tr>
+            <tr>
+                <td>Question Relevance</td>
+                <td>AI verifies question targets candidate's actual experience</td>
+                <td>Each question must link to specific resume entry or skill</td>
+            </tr>
+            <tr>
+                <td>Difficulty Calibration</td>
+                <td>AI checks question complexity vs role level</td>
+                <td>Senior role = senior-level questions, no mismatch</td>
+            </tr>
+            <tr>
+                <td>Uniqueness Check</td>
+                <td>Hash comparison + semantic similarity against DB</td>
+                <td>Similarity score < 70% with any recent question (30 days)</td>
+            </tr>
+            <tr>
+                <td>Question Count</td>
+                <td>Schema validation</td>
+                <td>Generated count matches requested count (10-15 questions)</td>
+            </tr>
+            <tr>
+                <td>Category Distribution</td>
+                <td>Count questions per category</td>
+                <td>Minimum 1 behavioral, 1 technical, 1 experience verification</td>
+            </tr>
+            <tr>
+                <td>Expected Answers Present</td>
+                <td>AI must provide answer points for each question</td>
+                <td>Every question has at least 2-4 expected answer points</td>
+            </tr>
+        </table>
+        <p><strong>Validation Outcome:</strong> Questions failing validation are regenerated. Max 3 regeneration attempts before escalating to manual creation.</p>
+    </div>
+</div>
+
+<!-- POC 5: Interview Validation & Readiness Scoring Agent -->
+<div class="poc-section">
+    <h2>POC 5: Interview Validation & Readiness Scoring Agent</h2>
+
+    <div class="objective">
+        <h4>Objective</h4>
+        <p>Analyze L1 (first-level screening) interview recordings/transcripts to provide standardized, objective interview scores. PRD Section 6.2.3: "Standardized evaluation signals independent of individual recruiters."</p>
+    </div>
+
+    <div class="problem">
+        <h4>Problem Statement</h4>
+        <p>L1 interviews are inconsistent across interviewers. No standardized scoring. Manual review takes 30-45 minutes. PRD requires "Consistent readiness assessment" through structured validation.</p>
+    </div>
+
+    <div class="approach">
+        <h4>Chosen Approach</h4>
+        <p><strong>Claude AI-Powered Interview Transcript Analysis</strong></p>
+        <p>Using <strong>Claude 3.5 Sonnet</strong> via Anthropic API to analyze interview transcripts, evaluate technical accuracy, assess communication quality, and provide standardized scoring independent of interviewer bias.</p>
+        <ol>
+            <li>Receive interview transcript (from video call transcription or manual entry)</li>
+            <li>Retrieve expected answers from POC 4 question generation output</li>
+            <li>Send transcript + expected answers to <strong>Claude AI</strong></li>
+            <li>Claude evaluates each answer against expected answer points</li>
+            <li>Claude assesses communication clarity and technical accuracy</li>
+            <li>Generate standardized scores with detailed breakdown</li>
+        </ol>
+    </div>
+
+    <div class="data-source">
+        <h4>Data Source</h4>
+        <table>
+            <tr><th>Data</th><th>Source</th></tr>
+            <tr><td>Interview Transcript</td><td>Video call transcription or manual entry</td></tr>
+            <tr><td>Interview Questions</td><td>Generated questions from POC 4</td></tr>
+            <tr><td>Expected Answers</td><td>Answer rubric from POC 4 output</td></tr>
+            <tr><td>Candidate Profile</td><td>SmartRecruitz database (from POC 1-4)</td></tr>
+            <tr><td>AI Processing</td><td>Claude 3.5 Sonnet for transcript analysis</td></tr>
+        </table>
+    </div>
+
+    <div class="io-container">
+        <div class="input-box">
+            <h4>INPUT</h4>
+<pre>{
+  "interview_id": "INT-2024-5678",
+  "candidate_id": "SR-2024-00123",
+  "position": "Python Developer",
+  "interview_type": "L1_SCREENING",
+
+  "transcript": "
+    INTERVIEWER: Tell me about yourself.
+
+    CANDIDATE: I'm Rahul with 4 years of
+    Python experience. I worked at Infosys
+    building microservices...
+
+    INTERVIEWER: Explain list vs tuple.
+
+    CANDIDATE: Lists are mutable, tuples
+    are immutable. Tuples are faster and
+    can be used as dictionary keys...
+
+    INTERVIEWER: What is REST API?
+
+    CANDIDATE: REST is an architectural
+    style for web services. It uses HTTP
+    methods like GET, POST, PUT, DELETE...
+  ",
+
+  "evaluation_criteria": [
+    "Technical Knowledge",
+    "Communication",
+    "Relevant Experience"
+  ]
+}</pre>
+        </div>
+        <div class="output-box">
+            <h4>OUTPUT</h4>
+<pre>{
+  "interview_id": "INT-2024-5678",
+  "candidate_id": "SR-2024-00123",
+
+  "overall_score": 78,
+  "l1_status": "PASSED",
+
+  "evaluation": {
+    "technical_knowledge": {
+      "score": 82,
+      "max": 100,
+      "assessment": "Good understanding of
+        Python fundamentals. Correctly
+        explained list vs tuple with
+        additional insight about hashability."
+    },
+    "communication": {
+      "score": 75,
+      "assessment": "Clear and structured
+        responses. Good articulation."
+    },
+    "relevant_experience": {
+      "score": 80,
+      "assessment": "4 years relevant
+        experience aligns with requirements."
+    }
+  },
+
+  "answer_validation": [
+    {
+      "question": "Explain list vs tuple",
+      "answer_quality": "CORRECT",
+      "score": 90,
+      "notes": "Included extra point about
+        dictionary keys - shows depth"
+    },
+    {
+      "question": "What is REST API",
+      "answer_quality": "CORRECT",
+      "score": 75,
+      "notes": "Basic correct answer, could
+        elaborate on statelessness"
+    }
+  ],
+
+  "recommendation": "PROCEED_TO_L2",
+  "readiness_level": "INTERVIEW_READY"
+}</pre>
+        </div>
+    </div>
+
+    <div class="validation">
+        <h4>How Validation Happens</h4>
+        <table>
+            <tr><th>Validation Check</th><th>Method</th><th>Pass Criteria</th></tr>
+            <tr>
+                <td>Transcript Completeness</td>
+                <td>Check transcript has Q&A pairs</td>
+                <td>Minimum 5 question-answer exchanges</td>
+            </tr>
+            <tr>
+                <td>Answer Quality Assessment</td>
+                <td>AI compares answer vs expected answer points from POC 4</td>
+                <td>Each answer scored: CORRECT / PARTIAL / INCORRECT</td>
+            </tr>
+            <tr>
+                <td>Score Consistency</td>
+                <td>AI cross-checks individual scores vs overall score</td>
+                <td>Overall score = weighted average of category scores (±5%)</td>
+            </tr>
+            <tr>
+                <td>Technical Accuracy</td>
+                <td>AI validates technical answers against known facts</td>
+                <td>No factually incorrect statements accepted as correct</td>
+            </tr>
+            <tr>
+                <td>Communication Score</td>
+                <td>AI analyzes clarity, structure, articulation</td>
+                <td>Based on sentence structure, completeness of answers</td>
+            </tr>
+            <tr>
+                <td>Pass/Fail Threshold</td>
+                <td>Compare overall score against role threshold</td>
+                <td>Score >= 60% = PASSED, < 60% = FAILED</td>
+            </tr>
+        </table>
+        <p><strong>Validation Outcome:</strong> L1 result (PASSED/FAILED) with detailed breakdown. Failed candidates can re-attempt after 30 days.</p>
+    </div>
+</div>
+
+<!-- POC 6: Job Matching & Candidate Search -->
+<div class="poc-section">
+    <h2>POC 6: Job Matching & Candidate Search Agent</h2>
+
+    <div class="objective">
+        <h4>Objective</h4>
+        <p>Match verified candidates from talent pools to enterprise job requirements with explainable scoring. PRD: "Talent Pooling & Discovery - Controlled access to enterprise consumers of talent data."</p>
+    </div>
+
+    <div class="problem">
+        <h4>Problem Statement</h4>
+        <p>Hiring managers struggle to find the right candidates from large talent pools. Manual searching is time-consuming and keyword-based matching misses qualified candidates with different terminology. Enterprises need AI-powered search with semantic understanding and explainable match scores.</p>
+    </div>
+
+    <div class="outcome">
+        <h4>Expected Outcome</h4>
+        <ul>
+            <li>Search candidates by JD upload, skills, domain, or manual criteria</li>
+            <li>AI-powered semantic matching (not just keyword match)</li>
+            <li>Match percentage with explainable breakdown</li>
+            <li>Ranked candidate list with strengths/gaps for each</li>
+            <li>Support for additional interview requests for selected candidates</li>
+            <li>Search response time under 5 seconds for pools up to 10,000 candidates</li>
+        </ul>
+    </div>
+
+    <div class="approach">
+        <h4>Chosen Approach</h4>
+        <p><strong>Two-Step Process: Database Query + AI Scoring</strong></p>
+        <table>
+            <tr><th>Step</th><th>Action</th><th>Done By</th></tr>
+            <tr>
+                <td><strong>Step 1</strong></td>
+                <td>Retrieve data from database:
+                    <ul>
+                        <li>Get job requirements (from job posting)</li>
+                        <li>Get candidates from talent pool with matching primary skills</li>
+                        <li>Filter by basic criteria (experience years, location)</li>
+                    </ul>
+                </td>
+                <td><strong>Database Query</strong><br>(SQL)</td>
+            </tr>
+            <tr>
+                <td><strong>Step 2</strong></td>
+                <td>Send job + candidates to AI for:
+                    <ul>
+                        <li>Semantic skill matching (not just keyword)</li>
+                        <li>Experience relevance scoring</li>
+                        <li>Transferable skills identification</li>
+                        <li>Explainable match reasoning</li>
+                    </ul>
+                </td>
+                <td><strong>AI (Claude)</strong></td>
+            </tr>
+        </table>
+        <p><strong>Key Point:</strong> Database does initial filtering. AI receives filtered candidates + job requirements for intelligent matching.</p>
+    </div>
+
+    <div class="justification">
+        <h4>Justification vs Alternatives</h4>
+        <table>
+            <tr><th>Alternative</th><th>Why Not</th></tr>
+            <tr><td>Keyword-only Search</td><td>Misses candidates with equivalent skills using different terms (JS vs JavaScript)</td></tr>
+            <tr><td>Manual Screening</td><td>Time-consuming for large pools, inconsistent evaluation criteria</td></tr>
+            <tr><td>Rule-based Matching</td><td>Cannot handle nuanced requirements, no transferable skill recognition</td></tr>
+        </table>
+        <p><strong>Why AI (Claude):</strong> Semantic understanding of skills, identifies transferable experience, provides explainable reasoning for each match score, handles domain-specific terminology.</p>
+    </div>
+
+    <div class="data-source">
+        <h4>Data Source</h4>
+        <table>
+            <tr><th>Data</th><th>Source</th><th>When Retrieved</th></tr>
+            <tr><td>Job Requirements</td><td>Enterprise job posting in database</td><td>Step 1 - DB Query</td></tr>
+            <tr><td>Candidate Profiles</td><td>Talent Pool table (readiness > 70%)</td><td>Step 1 - DB Query</td></tr>
+            <tr><td>Skill Profiles</td><td>Normalized skills table (POC 1 output)</td><td>Step 1 - DB Query</td></tr>
+        </table>
+    </div>
+
+    <div class="flowchart">
+        <h4>Process Flow (Two-Step)</h4>
+<pre>
+STEP 1: DATABASE QUERY (No AI)
+================================
+[Job ID] --> [Get Job Requirements from DB]
+                    |
+                    v
+         Query Talent Pool:
+         - Has required skills
+         - Experience >= minimum
+         - Readiness > 70%
+         - Location match
+                    |
+                    v
+         [Filtered Candidates: 20-50]
+
+                    |
+                    v
+
+STEP 2: AI MATCHING (Claude)
+================================
+[Job] + [Candidates] --> [Claude AI]
+                              |
+                              v
+                    AI Evaluates Each:
+                    - Skill depth vs required
+                    - Transferable skills
+                    - Experience relevance
+                    - Match explanation
+                              |
+                              v
+                    [Ranked Candidates]
+</pre>
+    </div>
+
+    <div class="io-container">
+        <div class="input-box">
+            <h4>INPUT (Sent to AI)</h4>
+<pre>{
+  "job_id": "JOB-ENT-2024-001",
+  "enterprise_id": "ENT-TECHCORP",
+
+  "job_requirements": {
+    "title": "Senior Python Developer",
+    "required_skills": [
+      {"skill": "Python", "level": "Expert"},
+      {"skill": "REST API", "level": "Advanced"},
+      {"skill": "PostgreSQL", "level": "Intermediate"}
+    ],
+    "min_experience_years": 3,
+    "education": "BTech/BE preferred",
+    "location": "Bangalore"
+  },
+
+  "candidates_from_db": [
+    {
+      "candidate_id": "SR-2024-00123",
+      "name": "Rahul Sharma",
+      "total_experience_years": 4,
+      "skills": [
+        {"skill": "Python", "level": "Expert", "years": 4},
+        {"skill": "REST API", "level": "Advanced", "years": 3},
+        {"skill": "MySQL", "level": "Advanced", "years": 3}
+      ],
+      "readiness_score": 85,
+      "location": "Bangalore"
+    },
+    {
+      "candidate_id": "SR-2024-00456",
+      "name": "Priya Patel",
+      "total_experience_years": 5,
+      "skills": [
+        {"skill": "Python", "level": "Advanced", "years": 3},
+        {"skill": "PostgreSQL", "level": "Expert", "years": 4}
+      ],
+      "readiness_score": 82,
+      "location": "Bangalore"
+    }
+  ],
+
+  "max_results": 10
+}
+
+Note: candidates_from_db is retrieved from
+database BEFORE calling AI. AI scores and
+ranks these pre-filtered candidates.</pre>
+        </div>
+        <div class="output-box">
+            <h4>OUTPUT</h4>
+<pre>{
+  "job_id": "JOB-ENT-2024-001",
+
+  "matched_candidates": [
+    {
+      "candidate_id": "SR-2024-00123",
+      "name": "Rahul Sharma",
+      "match_score": 87,
+      "readiness_score": 85,
+
+      "skill_match": {
+        "Python": {
+          "required": "Expert",
+          "has": "Expert",
+          "match": 100
+        },
+        "REST API": {
+          "required": "Advanced",
+          "has": "Advanced",
+          "match": 100
+        },
+        "PostgreSQL": {
+          "required": "Intermediate",
+          "has": "Beginner",
+          "match": 60,
+          "note": "Has MySQL experience,
+            transferable skill"
+        }
+      },
+
+      "experience_match": {
+        "required": 3,
+        "has": 4,
+        "match": 100
+      },
+
+      "overall_fit": "STRONG_MATCH",
+      "recommendation": "SHORTLIST"
+    }
+  ],
+
+  "total_matches": 8,
+  "match_summary": {
+    "strong_matches": 3,
+    "good_matches": 4,
+    "partial_matches": 1
+  }
+}</pre>
+        </div>
+    </div>
+
+    <div class="validation">
+        <h4>How Validation Happens</h4>
+        <table>
+            <tr><th>Step</th><th>Validation Check</th><th>Method</th><th>Pass Criteria</th></tr>
+            <tr>
+                <td rowspan="4"><strong>Step 1<br>(Database)</strong></td>
+                <td>Readiness Check</td>
+                <td>Filter by readiness_score column</td>
+                <td>Only candidates with readiness > 70%</td>
+            </tr>
+            <tr>
+                <td>Basic Skill Filter</td>
+                <td>SQL query on skills table</td>
+                <td>Has at least 1 required skill</td>
+            </tr>
+            <tr>
+                <td>Experience Filter</td>
+                <td>Compare years column</td>
+                <td>Experience >= minimum required</td>
+            </tr>
+            <tr>
+                <td>Location Filter</td>
+                <td>SQL WHERE clause</td>
+                <td>Location matches or is flexible</td>
+            </tr>
+            <tr>
+                <td rowspan="4"><strong>Step 2<br>(AI)</strong></td>
+                <td>Skill Depth Matching</td>
+                <td>AI compares proficiency levels semantically</td>
+                <td>Expert=100, Advanced=80, Intermediate=60, Beginner=40</td>
+            </tr>
+            <tr>
+                <td>Transferable Skills</td>
+                <td>AI identifies related skills (MySQL → PostgreSQL)</td>
+                <td>Related skills get partial credit (60-80%)</td>
+            </tr>
+            <tr>
+                <td>Experience Relevance</td>
+                <td>AI evaluates if experience is relevant to role</td>
+                <td>"Built APIs" relevant to "API Developer" role</td>
+            </tr>
+            <tr>
+                <td>Overall Match Score</td>
+                <td>AI weighted calculation with explanation</td>
+                <td>Strong > 80%, Good 60-80%, Partial 40-60%</td>
+            </tr>
+        </table>
+        <p><strong>Validation Outcome:</strong> Database filters candidates (fast), AI scores and ranks them (intelligent). Enterprise sees explainable match breakdown.</p>
+    </div>
+</div>
+
+<!-- Summary -->
+<h2 class="page-break">Summary: POC Data Flow Architecture</h2>
+
+<div class="flowchart">
+<pre>
+SMARTRECRUITZ DATA FLOW (6 POCs)
+================================
+
+CANDIDATE ONBOARDING & VERIFICATION:
+------------------------------------
+[Resume Upload] --> POC 1: Resume Parser & Skill Normalization
+                           + Quick Duplicate Pre-Check (Email/Phone)
+                                      |
+                                      v
+                           [candidates_staging table]
+                                      |
+                                      v
+                    POC 2: Deep Duplicate Identification
+                                      |
+                    ┌─────────────────┴─────────────────┐
+                    ↓                                   ↓
+              [UNIQUE]                           [DUPLICATE]
+                    ↓                                   ↓
+        [Move to candidates_main]           [Merge/Review/Reject]
+                    |
+                    v
+[ID Docs + Exp Letters] --> POC 3: Verification Agent
+                           (Identity + Experience)
+                                      |
+                                      v
+                       L1 INTERVIEW (Skill Validation):
+                       ---------------------------------
+                       POC 4: Interview Question Generation
+                                      |
+                                      v
+                       [Video Interview Service]
+                                      |
+                                      v
+                       POC 5: Interview Validation & Readiness
+                                      |
+                                      v
+                       ════════════════════════════════
+                           VERIFIED TALENT POOL
+                       ════════════════════════════════
+
+
+HIRING MANAGER - SEARCH & SELECTION:
+------------------------------------
+[JD Upload / Skills] --> POC 6: Job Matching & Candidate Search
+                                      |
+                         (Search from Verified Talent Pool)
+                                      |
+                                      v
+                              SELECT CANDIDATES
+                                      |
+              ┌───────────────────────┴───────────────────────┐
+              |                                               |
+    [Direct Selection]                          [Additional Test Required]
+              |                                               |
+              v                                               v
+       CLOSE CANDIDATE                          POC 4 → Video Interview → POC 5
+                                                        (Re-test)
+</pre>
+</div>
+
+<h3>Key Clarifications (6 POCs)</h3>
+<table>
+    <tr>
+        <th>POC</th>
+        <th>Input Data Source</th>
+        <th>AI/Tools Used</th>
+        <th>Output Usage</th>
+    </tr>
+    <tr style="background: #e3f2fd;">
+        <td colspan="4"><strong>Candidate Onboarding & Verification</strong></td>
+    </tr>
+    <tr>
+        <td>1. Resume Parser & Skill Normalization</td>
+        <td>Candidate uploaded resume file</td>
+        <td>Claude Vision</td>
+        <td>Profile + normalized skills in DB</td>
+    </tr>
+    <tr>
+        <td>2. Duplicate Identification</td>
+        <td>New candidate data</td>
+        <td>Claude 3.5 Sonnet</td>
+        <td>Prevent duplicates</td>
+    </tr>
+    <tr>
+        <td>3. Verification (Identity + Experience)</td>
+        <td>ID docs + Exp letters + LinkedIn</td>
+        <td>Claude Vision, Web Scraping, Apollo</td>
+        <td>Verified candidate flag</td>
+    </tr>
+    <tr style="background: #e8f5e9;">
+        <td colspan="4"><strong>L1 Interview & Talent Pool Entry</strong></td>
+    </tr>
+    <tr>
+        <td>4. Interview Question Generation</td>
+        <td>Candidate profile + skills</td>
+        <td>Claude 3.5 / GPT-4.0 (TBD)</td>
+        <td>Personalized L1 questions</td>
+    </tr>
+    <tr>
+        <td>5. Interview Validation & Readiness</td>
+        <td>Transcript + all POC signals</td>
+        <td>Claude 3.5 Sonnet</td>
+        <td>Readiness score → Talent Pool entry</td>
+    </tr>
+    <tr style="background: #fff3e0;">
+        <td colspan="4"><strong>Hiring Manager - Search & Selection</strong></td>
+    </tr>
+    <tr>
+        <td>6. Job Matching & Candidate Search</td>
+        <td>JD upload / manual skills + talent pool</td>
+        <td>Claude 3.5 Sonnet</td>
+        <td>Matched candidate list</td>
+    </tr>
+</table>
+<p style="font-size: 11px; color: #666; margin-top: 8px;"><strong>Note:</strong> POC 4 & 5 can be triggered again by Hiring Manager if additional testing is required after selection.</p>
+
+<h3>Technology Stack Summary</h3>
+
+<h4>AI Models</h4>
+<table>
+    <tr>
+        <th>Model</th>
+        <th>POCs</th>
+        <th>Capabilities Used</th>
+        <th>Status</th>
+    </tr>
+    <tr>
+        <td><strong>Claude 3.5 Sonnet</strong></td>
+        <td>POC 2, 5, 6</td>
+        <td>Text analysis, semantic understanding, scoring, matching</td>
+        <td>Confirmed</td>
+    </tr>
+    <tr>
+        <td><strong>Claude 3.5 Sonnet (Vision)</strong></td>
+        <td>POC 1, 3</td>
+        <td>Document OCR, image analysis, fraud detection</td>
+        <td>Confirmed</td>
+    </tr>
+    <tr style="background-color: #fffbeb;">
+        <td><strong>Claude 3.5 Sonnet OR GPT-4.0</strong></td>
+        <td>POC 4</td>
+        <td>Interview question generation</td>
+        <td>To Be Finalized</td>
+    </tr>
+</table>
+<p style="font-size: 11px; color: #666; margin-top: 5px;"><em>POC 4 AI model selection pending evaluation between Claude 3.5 Sonnet and GPT-4.0.</em></p>
+
+<h4 style="margin-top: 20px;">Web Scraping Tools (POC 3 - LinkedIn/Job Portals)</h4>
+<table>
+    <tr>
+        <th>Tool</th>
+        <th>Type</th>
+        <th>Use Case</th>
+    </tr>
+    <tr>
+        <td><strong>Selenium / Playwright</strong></td>
+        <td>Browser Automation</td>
+        <td>Handle dynamic content, login-required pages</td>
+    </tr>
+    <tr>
+        <td><strong>BeautifulSoup</strong></td>
+        <td>HTML Parser</td>
+        <td>Extract structured data from static HTML</td>
+    </tr>
+    <tr>
+        <td><strong>Scrapy</strong></td>
+        <td>Web Crawling</td>
+        <td>Batch extraction from job portals</td>
+    </tr>
+    <tr>
+        <td><strong>Apollo.io</strong></td>
+        <td>Data Enrichment API</td>
+        <td>Professional profile data, employment history, contact enrichment</td>
+    </tr>
+    <tr>
+        <td><strong>LinkedIn API</strong></td>
+        <td>Official API</td>
+        <td>Compliant data access with OAuth consent</td>
+    </tr>
+</table>
+<p style="font-size: 11px; color: #666; margin-top: 5px;"><em>Web scraping performed with candidate consent and platform ToS compliance.</em></p>
+
+<hr style="margin-top: 40px; border: none; border-top: 1px solid #ddd;">
+
+<p style="text-align: center; color: #888; font-size: 12px; margin-top: 20px;">
+    ZennialPro | SmartRecruitz AI Agents - 6 POCs | v3.0
+</p>
+
+</body>
+</html>
