@@ -35,3 +35,4 @@ documents/
 tech_docs/
 **/CLAUDE.md
 CLAUDE.md
+gen_utilization.py
